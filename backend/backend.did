@@ -1,0 +1,25 @@
+type SharedSiteData = 
+ record {
+   pages: vec text;
+   siteData: vec record {
+                   text;
+                   Page;
+                 };
+ };
+type Page = vec Element;
+type MediaItem = 
+ record {
+   data: blob;
+   name: text;
+ };
+type Element = 
+ record {
+   content: text;
+   "type": text;
+ };
+service : {
+  getMediaLibrary: () -> (vec MediaItem) query;
+  getSiteData: () -> (opt SharedSiteData) query;
+  publishSite: (SharedSiteData) -> ();
+  uploadMedia: (text, blob) -> ();
+}
