@@ -23,6 +23,7 @@ function initBuilder() {
     initPropertyPanel();
     initHistory();
     loadSavedDesign();
+    setDeviceView('desktop'); // Set initial device view
 }
 
 // Drag and Drop functionality
@@ -620,6 +621,22 @@ function setDeviceView(device) {
                 canvasContainer.style.height = '667px';
                 break;
         }
+        
+        // Add device frame
+        canvas.style.border = '10px solid #333';
+        canvas.style.borderRadius = device === 'desktop' ? '5px' : '20px';
+        
+        // Adjust canvas container
+        canvasContainer.style.display = 'flex';
+        canvasContainer.style.justifyContent = 'center';
+        canvasContainer.style.alignItems = 'center';
+        canvasContainer.style.height = '100%';
+        canvasContainer.style.overflow = 'auto';
+        
+        // Scale canvas content
+        const scale = device === 'desktop' ? 1 : (device === 'tablet' ? 0.75 : 0.5);
+        canvas.style.transform = `scale(${scale})`;
+        canvas.style.transformOrigin = 'top left';
     }
     
     const buttons = document.querySelectorAll('.device-button');
@@ -701,10 +718,26 @@ function previewDesign() {
                 ${document.querySelector('style').textContent}
                 .canvas-element { position: relative !important; }
                 .element-controls { display: none; }
+                body { 
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    height: 100vh;
+                    margin: 0;
+                    background-color: #f0f0f0;
+                }
+                #preview-container {
+                    width: ${state.deviceView === 'desktop' ? '100%' : state.deviceView === 'tablet' ? '768px' : '375px'};
+                    height: ${state.deviceView === 'desktop' ? '100%' : state.deviceView === 'tablet' ? '1024px' : '667px'};
+                    border: 10px solid #333;
+                    border-radius: ${state.deviceView === 'desktop' ? '5px' : '20px'};
+                    overflow: auto;
+                    background-color: white;
+                }
             </style>
         </head>
         <body>
-            <div id="canvas" class="${state.deviceView}">
+            <div id="preview-container">
                 ${canvas.innerHTML}
             </div>
         </body>
