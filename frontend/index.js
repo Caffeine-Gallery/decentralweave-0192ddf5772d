@@ -120,6 +120,31 @@ function createCanvasElement(type) {
         case 'table':
             element.innerHTML += '<table><tr><th>Header 1</th><th>Header 2</th></tr><tr><td>Row 1, Cell 1</td><td>Row 1, Cell 2</td></tr></table>';
             break;
+        case 'social-icons':
+            element.innerHTML += '<div class="social-icons"><i class="fab fa-facebook"></i><i class="fab fa-twitter"></i><i class="fab fa-instagram"></i></div>';
+            break;
+        case 'map':
+            element.innerHTML += '<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.1422937950147!2d-73.98731968482413!3d40.75889497932681!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25855c6480299%3A0x55194ec5a1ae072e!2sTimes+Square!5e0!3m2!1sen!2sus!4v1510579767785" width="400" height="300" frameborder="0" style="border:0" allowfullscreen></iframe>';
+            break;
+        case 'countdown':
+            element.innerHTML += '<div class="countdown">Countdown: <span id="countdown-timer">10:00</span></div>';
+            break;
+        case 'pricing-table':
+            element.innerHTML += `
+                <div class="pricing-table">
+                    <div class="pricing-plan">
+                        <h3>Basic</h3>
+                        <p class="price">$9.99/mo</p>
+                        <ul>
+                            <li>Feature 1</li>
+                            <li>Feature 2</li>
+                            <li>Feature 3</li>
+                        </ul>
+                        <button>Choose Plan</button>
+                    </div>
+                </div>
+            `;
+            break;
         case 'section':
             element.innerHTML += '<div class="section" style="width: 100%; height: 200px; border: 1px dashed #ccc;"></div>';
             break;
@@ -128,18 +153,6 @@ function createCanvasElement(type) {
             break;
         case 'grid':
             element.innerHTML += '<div class="grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 300px; height: 200px;"></div>';
-            break;
-        case 'navbar':
-            element.innerHTML += '<nav><ul><li><a href="#">Home</a></li><li><a href="#">About</a></li><li><a href="#">Contact</a></li></ul></nav>';
-            break;
-        case 'footer':
-            element.innerHTML += '<footer><p>&copy; 2023 Your Company. All rights reserved.</p></footer>';
-            break;
-        case 'card':
-            element.innerHTML += '<div class="card" style="width: 200px; border: 1px solid #ccc; padding: 10px;"><h3>Card Title</h3><p>Card content goes here.</p></div>';
-            break;
-        case 'carousel':
-            element.innerHTML += '<div class="carousel"><img src="https://via.placeholder.com/300x200" alt="Slide 1"><img src="https://via.placeholder.com/300x200" alt="Slide 2"><img src="https://via.placeholder.com/300x200" alt="Slide 3"></div>';
             break;
     }
     
@@ -492,13 +505,91 @@ function hex(x) {
 // New function to generate HTML code
 function generateHTMLCode() {
     const canvas = document.getElementById('canvas');
-    let code = `<!DOCTYPE html>\n<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <title>Generated Website</title>\n    <style>\n        /* Add your CSS styles here */\n    </style>\n</head>\n<body>\n`;
+    let htmlCode = `<!DOCTYPE html>\n<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <title>Generated Website</title>\n    <style>\n`;
     
-    code += canvas.innerHTML;
+    // Add CSS
+    htmlCode += generateCSS();
     
-    code += `\n</body>\n</html>`;
+    htmlCode += `    </style>\n</head>\n<body>\n`;
     
-    return code;
+    // Add canvas content
+    htmlCode += canvas.innerHTML;
+    
+    // Add JavaScript
+    htmlCode += `\n    <script>\n`;
+    htmlCode += generateJavaScript();
+    htmlCode += `    </script>\n`;
+    
+    htmlCode += `</body>\n</html>`;
+    
+    return htmlCode;
+}
+
+function generateCSS() {
+    let css = `
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .canvas-element {
+            position: absolute;
+        }
+        .element-controls {
+            display: none;
+        }
+    `;
+    
+    // Add specific styles for each element
+    state.elements.forEach(el => {
+        css += `
+        #${el.id} {
+            ${el.styles}
+        }
+        `;
+    });
+    
+    return css;
+}
+
+function generateJavaScript() {
+    let js = `
+        // Add any necessary JavaScript here
+        console.log('Website loaded');
+    `;
+    
+    // Add specific scripts for interactive elements
+    state.elements.forEach(el => {
+        if (el.type === 'countdown') {
+            js += `
+            // Countdown timer
+            function startCountdown(duration, display) {
+                var timer = duration, minutes, seconds;
+                setInterval(function () {
+                    minutes = parseInt(timer / 60, 10);
+                    seconds = parseInt(timer % 60, 10);
+
+                    minutes = minutes < 10 ? "0" + minutes : minutes;
+                    seconds = seconds < 10 ? "0" + seconds : seconds;
+
+                    display.textContent = minutes + ":" + seconds;
+
+                    if (--timer < 0) {
+                        timer = duration;
+                    }
+                }, 1000);
+            }
+
+            window.onload = function () {
+                var tenMinutes = 60 * 10,
+                    display = document.querySelector('#countdown-timer');
+                startCountdown(tenMinutes, display);
+            };
+            `;
+        }
+    });
+    
+    return js;
 }
 
 // New function to toggle code view
