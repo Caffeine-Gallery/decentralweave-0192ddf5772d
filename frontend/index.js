@@ -114,6 +114,33 @@ function createCanvasElement(type) {
         case 'form':
             element.innerHTML += '<form><input type="text" placeholder="Input field"><button type="submit">Submit</button></form>';
             break;
+        case 'list':
+            element.innerHTML += '<ul><li>List Item 1</li><li>List Item 2</li><li>List Item 3</li></ul>';
+            break;
+        case 'table':
+            element.innerHTML += '<table><tr><th>Header 1</th><th>Header 2</th></tr><tr><td>Row 1, Cell 1</td><td>Row 1, Cell 2</td></tr></table>';
+            break;
+        case 'section':
+            element.innerHTML += '<div class="section" style="width: 100%; height: 200px; border: 1px dashed #ccc;"></div>';
+            break;
+        case 'container':
+            element.innerHTML += '<div class="container" style="width: 300px; height: 200px; border: 1px solid #ccc;"></div>';
+            break;
+        case 'grid':
+            element.innerHTML += '<div class="grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 300px; height: 200px;"></div>';
+            break;
+        case 'navbar':
+            element.innerHTML += '<nav><ul><li><a href="#">Home</a></li><li><a href="#">About</a></li><li><a href="#">Contact</a></li></ul></nav>';
+            break;
+        case 'footer':
+            element.innerHTML += '<footer><p>&copy; 2023 Your Company. All rights reserved.</p></footer>';
+            break;
+        case 'card':
+            element.innerHTML += '<div class="card" style="width: 200px; border: 1px solid #ccc; padding: 10px;"><h3>Card Title</h3><p>Card content goes here.</p></div>';
+            break;
+        case 'carousel':
+            element.innerHTML += '<div class="carousel"><img src="https://via.placeholder.com/300x200" alt="Slide 1"><img src="https://via.placeholder.com/300x200" alt="Slide 2"><img src="https://via.placeholder.com/300x200" alt="Slide 3"></div>';
+            break;
     }
     
     element.addEventListener('mousedown', startDragging);
@@ -196,6 +223,15 @@ function updateElementProperty(e) {
         case 'bgcolor':
             state.selectedElement.style.backgroundColor = value;
             document.getElementById('bg-color-preview').style.backgroundColor = value;
+            break;
+        case 'text':
+            state.selectedElement.querySelector('h2, p, button').textContent = value;
+            break;
+        case 'font-size':
+            state.selectedElement.style.fontSize = value.includes('px') ? value : value + 'px';
+            break;
+        case 'font-color':
+            state.selectedElement.style.color = value;
             break;
     }
     
@@ -433,6 +469,9 @@ function showProperties() {
         document.getElementById('element-width').value = styles.width;
         document.getElementById('element-height').value = styles.height;
         document.getElementById('element-bgcolor').value = rgb2hex(styles.backgroundColor);
+        document.getElementById('element-text').value = state.selectedElement.textContent;
+        document.getElementById('element-font-size').value = styles.fontSize;
+        document.getElementById('element-font-color').value = rgb2hex(styles.color);
     }
 }
 

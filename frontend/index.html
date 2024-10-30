@@ -12,7 +12,7 @@
         <div id="sidebar">
             <div class="logo">Website Builder</div>
             <div class="sidebar-section">
-                <h3 class="sidebar-title">Elements</h3>
+                <h3 class="sidebar-title">Add Elements</h3>
                 <div class="element-grid">
                     <div class="element" draggable="true" data-type="heading">
                         <i class="fas fa-heading"></i>
@@ -35,8 +35,54 @@
                         <span>Video</span>
                     </div>
                     <div class="element" draggable="true" data-type="form">
-                        <i class="fas fa-form"></i>
+                        <i class="fas fa-wpforms"></i>
                         <span>Form</span>
+                    </div>
+                    <div class="element" draggable="true" data-type="list">
+                        <i class="fas fa-list"></i>
+                        <span>List</span>
+                    </div>
+                    <div class="element" draggable="true" data-type="table">
+                        <i class="fas fa-table"></i>
+                        <span>Table</span>
+                    </div>
+                </div>
+            </div>
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">Layout</h3>
+                <div class="element-grid">
+                    <div class="element" draggable="true" data-type="section">
+                        <i class="fas fa-columns"></i>
+                        <span>Section</span>
+                    </div>
+                    <div class="element" draggable="true" data-type="container">
+                        <i class="fas fa-box-open"></i>
+                        <span>Container</span>
+                    </div>
+                    <div class="element" draggable="true" data-type="grid">
+                        <i class="fas fa-th"></i>
+                        <span>Grid</span>
+                    </div>
+                </div>
+            </div>
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">Components</h3>
+                <div class="element-grid">
+                    <div class="element" draggable="true" data-type="navbar">
+                        <i class="fas fa-bars"></i>
+                        <span>Navbar</span>
+                    </div>
+                    <div class="element" draggable="true" data-type="footer">
+                        <i class="fas fa-shoe-prints"></i>
+                        <span>Footer</span>
+                    </div>
+                    <div class="element" draggable="true" data-type="card">
+                        <i class="fas fa-credit-card"></i>
+                        <span>Card</span>
+                    </div>
+                    <div class="element" draggable="true" data-type="carousel">
+                        <i class="fas fa-images"></i>
+                        <span>Carousel</span>
                     </div>
                 </div>
             </div>
@@ -49,11 +95,13 @@
                     <button class="device-button" onclick="setDeviceView('mobile')"><i class="fas fa-mobile-alt"></i></button>
                 </div>
                 <div class="top-controls">
-                    <button class="button button-secondary" onclick="toggleCodeView()">View Code</button>
-                    <button class="button button-secondary" onclick="toggleGrid()">Toggle Grid</button>
-                    <button class="button button-primary" onclick="saveDesign()">Save</button>
-                    <button class="button button-secondary" onclick="previewDesign()">Preview</button>
-                    <button class="button button-primary" onclick="publishDesign()">Publish</button>
+                    <button class="button button-secondary" onclick="undo()"><i class="fas fa-undo"></i> Undo</button>
+                    <button class="button button-secondary" onclick="redo()"><i class="fas fa-redo"></i> Redo</button>
+                    <button class="button button-secondary" onclick="toggleCodeView()"><i class="fas fa-code"></i> View Code</button>
+                    <button class="button button-secondary" onclick="toggleGrid()"><i class="fas fa-th"></i> Toggle Grid</button>
+                    <button class="button button-primary" onclick="saveDesign()"><i class="fas fa-save"></i> Save</button>
+                    <button class="button button-secondary" onclick="previewDesign()"><i class="fas fa-eye"></i> Preview</button>
+                    <button class="button button-primary" onclick="publishDesign()"><i class="fas fa-upload"></i> Publish</button>
                 </div>
             </div>
             <div id="canvas-container">
@@ -77,6 +125,18 @@
                     <input type="color" id="element-bgcolor" class="property-input">
                     <div id="bg-color-preview" class="color-preview"></div>
                 </div>
+            </div>
+            <div class="property-group">
+                <label for="element-text">Text Content:</label>
+                <textarea id="element-text" class="property-input"></textarea>
+            </div>
+            <div class="property-group">
+                <label for="element-font-size">Font Size:</label>
+                <input type="text" id="element-font-size" class="property-input">
+            </div>
+            <div class="property-group">
+                <label for="element-font-color">Font Color:</label>
+                <input type="color" id="element-font-color" class="property-input">
             </div>
         </div>
     </div>
