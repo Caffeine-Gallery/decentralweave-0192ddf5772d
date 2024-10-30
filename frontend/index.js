@@ -318,6 +318,50 @@ function createCanvasElement(type) {
                 </div>
             `;
             break;
+        case 'audio':
+            element.innerHTML += `
+                <audio controls>
+                    <source src="https://www.w3schools.com/html/horse.ogg" type="audio/ogg">
+                    Your browser does not support the audio element.
+                </audio>
+                <p contenteditable="true">Audio Caption</p>
+            `;
+            break;
+        case 'slider':
+            element.innerHTML += `
+                <div class="slider">
+                    <input type="range" min="0" max="100" value="50" class="slider-input">
+                    <p contenteditable="true">Slider Value: <span class="slider-value">50</span></p>
+                </div>
+            `;
+            break;
+        case 'rating':
+            element.innerHTML += `
+                <div class="rating">
+                    <span class="star" data-rating="1">&#9733;</span>
+                    <span class="star" data-rating="2">&#9733;</span>
+                    <span class="star" data-rating="3">&#9733;</span>
+                    <span class="star" data-rating="4">&#9733;</span>
+                    <span class="star" data-rating="5">&#9733;</span>
+                </div>
+                <p contenteditable="true">Rating: <span class="rating-value">0</span></p>
+            `;
+            break;
+        case 'chart':
+            element.innerHTML += `
+                <canvas id="myChart" width="400" height="200"></canvas>
+                <p contenteditable="true">Chart Caption</p>
+            `;
+            // Note: You'll need to include Chart.js library and initialize the chart
+            break;
+        case 'countdown-timer':
+            element.innerHTML += `
+                <div class="countdown-timer">
+                    <span class="days">00</span>:<span class="hours">00</span>:<span class="minutes">00</span>:<span class="seconds">00</span>
+                </div>
+                <p contenteditable="true">Countdown Timer Caption</p>
+            `;
+            break;
         case 'section':
             element.innerHTML += '<div class="section" style="width: 100%; height: 200px; border: 1px dashed #ccc;"><p contenteditable="true">Section Content</p></div>';
             break;
@@ -980,6 +1024,115 @@ function generateJavaScript() {
             }
 
             window.addEventListener('load', initTabs);
+            `;
+        } else if (el.type === 'slider') {
+            js += `
+            // Slider functionality
+            function initSlider() {
+                const sliders = document.querySelectorAll('.slider');
+                sliders.forEach(slider => {
+                    const input = slider.querySelector('.slider-input');
+                    const value = slider.querySelector('.slider-value');
+                    input.addEventListener('input', () => {
+                        value.textContent = input.value;
+                    });
+                });
+            }
+
+            window.addEventListener('load', initSlider);
+            `;
+        } else if (el.type === 'rating') {
+            js += `
+            // Rating functionality
+            function initRating() {
+                const ratings = document.querySelectorAll('.rating');
+                ratings.forEach(rating => {
+                    const stars = rating.querySelectorAll('.star');
+                    const ratingValue = rating.querySelector('.rating-value');
+                    stars.forEach(star => {
+                        star.addEventListener('click', () => {
+                            const value = star.dataset.rating;
+                            ratingValue.textContent = value;
+                            stars.forEach(s => s.classList.toggle('active', s.dataset.rating <= value));
+                        });
+                    });
+                });
+            }
+
+            window.addEventListener('load', initRating);
+            `;
+        } else if (el.type === 'chart') {
+            js += `
+            // Chart functionality
+            function initChart() {
+                const ctx = document.getElementById('myChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+                        datasets: [{
+                            label: '# of Votes',
+                            data: [12, 19, 3, 5, 2, 3],
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.2)',
+                                'rgba(54, 162, 235, 0.2)',
+                                'rgba(255, 206, 86, 0.2)',
+                                'rgba(75, 192, 192, 0.2)',
+                                'rgba(153, 102, 255, 0.2)',
+                                'rgba(255, 159, 64, 0.2)'
+                            ],
+                            borderColor: [
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)',
+                                'rgba(255, 159, 64, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            }
+
+            window.addEventListener('load', initChart);
+            `;
+        } else if (el.type === 'countdown-timer') {
+            js += `
+            // Countdown Timer functionality
+            function initCountdownTimer() {
+                const countdownTimers = document.querySelectorAll('.countdown-timer');
+                countdownTimers.forEach(timer => {
+                    const endDate = new Date().getTime() + 24 * 60 * 60 * 1000; // 24 hours from now
+                    const x = setInterval(function() {
+                        const now = new Date().getTime();
+                        const distance = endDate - now;
+                        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                        
+                        timer.querySelector('.days').textContent = days.toString().padStart(2, '0');
+                        timer.querySelector('.hours').textContent = hours.toString().padStart(2, '0');
+                        timer.querySelector('.minutes').textContent = minutes.toString().padStart(2, '0');
+                        timer.querySelector('.seconds').textContent = seconds.toString().padStart(2, '0');
+                        
+                        if (distance < 0) {
+                            clearInterval(x);
+                            timer.textContent = "EXPIRED";
+                        }
+                    }, 1000);
+                });
+            }
+
+            window.addEventListener('load', initCountdownTimer);
             `;
         }
     });
