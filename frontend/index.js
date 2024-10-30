@@ -97,10 +97,10 @@ function createCanvasElement(type) {
     // Set default content based on type
     switch(type) {
         case 'heading':
-            element.innerHTML += '<h2>New Heading</h2>';
+            element.innerHTML += '<h2 contenteditable="true">New Heading</h2>';
             break;
         case 'text':
-            element.innerHTML += '<p>New Text Block</p>';
+            element.innerHTML += '<p contenteditable="true">New Text Block</p>';
             break;
         case 'button':
             element.innerHTML += '<button class="button button-primary">New Button</button>';
@@ -287,6 +287,73 @@ async function publishDesign() {
         console.error('Error publishing design:', error);
         alert('Error publishing design. Please try again.');
     }
+}
+
+// New functions to fix the errors
+function duplicateElement(elementId) {
+    const originalElement = document.getElementById(elementId);
+    if (originalElement) {
+        const clone = originalElement.cloneNode(true);
+        clone.id = 'element-' + Date.now();
+        clone.style.left = (parseInt(originalElement.style.left) + 10) + 'px';
+        clone.style.top = (parseInt(originalElement.style.top) + 10) + 'px';
+        originalElement.parentNode.appendChild(clone);
+        addToHistory({
+            type: 'duplicate',
+            originalId: elementId,
+            newElement: clone.outerHTML
+        });
+    }
+}
+
+function handleCanvasClick(e) {
+    if (e.target === canvas) {
+        if (state.selectedElement) {
+            state.selectedElement.classList.remove('selected');
+        }
+        state.selectedElement = null;
+        document.getElementById('properties-panel').classList.remove('active');
+    }
+}
+
+function updateHistoryPanel() {
+    const historyList = document.querySelector('.history-list');
+    historyList.innerHTML = '';
+    state.history.forEach((action, index) => {
+        const item = document.createElement('div');
+        item.className = 'history-item';
+        item.textContent = `Action ${index + 1}: ${action.type}`;
+        item.addEventListener('click', () => goToHistoryState(index));
+        historyList.appendChild(item);
+    });
+}
+
+function showProperties() {
+    const propertiesPanel = document.getElementById('properties-panel');
+    propertiesPanel.classList.add('active');
+    if (state.selectedElement) {
+        const type = state.selectedElement.dataset.type;
+        const styles = window.getComputedStyle(state.selectedElement);
+        
+        document.getElementById('element-width').value = styles.width;
+        document.getElementById('element-height').value = styles.height;
+        document.getElementById('element-bgcolor').value = rgb2hex(styles.backgroundColor);
+        // Add more property updates here
+    }
+}
+
+// Helper function to convert RGB to HEX
+function rgb2hex(rgb) {
+    if (rgb.startsWith('rgb')) {
+        rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+        return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
+    } else {
+        return rgb;
+    }
+}
+
+function hex(x) {
+    return ("0" + parseInt(x).toString(16)).slice(-2);
 }
 
 // Initialize the builder
