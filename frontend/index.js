@@ -106,41 +106,76 @@ function createCanvasElement(type) {
             element.innerHTML += '<button class="button button-primary" contenteditable="true">New Button</button>';
             break;
         case 'image':
-            element.innerHTML += `<img src="https://via.placeholder.com/300x200" alt="placeholder">`;
+            element.innerHTML += `<img src="https://via.placeholder.com/300x200" alt="placeholder"><p contenteditable="true">Image Caption</p>`;
             break;
         case 'video':
-            element.innerHTML += '<video width="320" height="240" controls><source src="movie.mp4" type="video/mp4">Your browser does not support the video tag.</video>';
+            element.innerHTML += '<video width="320" height="240" controls><source src="movie.mp4" type="video/mp4">Your browser does not support the video tag.</video><p contenteditable="true">Video Caption</p>';
             break;
         case 'form':
-            element.innerHTML += '<form><input type="text" placeholder="Input field"><button type="submit">Submit</button></form>';
+            element.innerHTML += `
+                <form>
+                    <label contenteditable="true">Name:</label>
+                    <input type="text" placeholder="Enter your name">
+                    <label contenteditable="true">Email:</label>
+                    <input type="email" placeholder="Enter your email">
+                    <button type="submit" contenteditable="true">Submit</button>
+                </form>
+            `;
             break;
         case 'list':
-            element.innerHTML += '<ul><li>List Item 1</li><li>List Item 2</li><li>List Item 3</li></ul>';
+            element.innerHTML += `
+                <ul>
+                    <li contenteditable="true">List Item 1</li>
+                    <li contenteditable="true">List Item 2</li>
+                    <li contenteditable="true">List Item 3</li>
+                </ul>
+            `;
             break;
         case 'table':
-            element.innerHTML += '<table><tr><th>Header 1</th><th>Header 2</th></tr><tr><td>Row 1, Cell 1</td><td>Row 1, Cell 2</td></tr></table>';
+            element.innerHTML += `
+                <table>
+                    <tr>
+                        <th contenteditable="true">Header 1</th>
+                        <th contenteditable="true">Header 2</th>
+                    </tr>
+                    <tr>
+                        <td contenteditable="true">Row 1, Cell 1</td>
+                        <td contenteditable="true">Row 1, Cell 2</td>
+                    </tr>
+                    <tr>
+                        <td contenteditable="true">Row 2, Cell 1</td>
+                        <td contenteditable="true">Row 2, Cell 2</td>
+                    </tr>
+                </table>
+            `;
             break;
         case 'social-icons':
-            element.innerHTML += '<div class="social-icons"><i class="fab fa-facebook"></i><i class="fab fa-twitter"></i><i class="fab fa-instagram"></i></div>';
+            element.innerHTML += `
+                <div class="social-icons">
+                    <i class="fab fa-facebook" contenteditable="true" title="Edit link"></i>
+                    <i class="fab fa-twitter" contenteditable="true" title="Edit link"></i>
+                    <i class="fab fa-instagram" contenteditable="true" title="Edit link"></i>
+                </div>
+            `;
             break;
         case 'map':
-            element.innerHTML += '<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.1422937950147!2d-73.98731968482413!3d40.75889497932681!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25855c6480299%3A0x55194ec5a1ae072e!2sTimes+Square!5e0!3m2!1sen!2sus!4v1510579767785" width="400" height="300" frameborder="0" style="border:0" allowfullscreen></iframe>';
+            element.innerHTML += '<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.1422937950147!2d-73.98731968482413!3d40.75889497932681!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25855c6480299%3A0x55194ec5a1ae072e!2sTimes+Square!5e0!3m2!1sen!2sus!4v1510579767785" width="400" height="300" frameborder="0" style="border:0" allowfullscreen></iframe><p contenteditable="true">Map Caption</p>';
             break;
         case 'countdown':
-            element.innerHTML += '<div class="countdown">Countdown: <span id="countdown-timer">10:00</span></div>';
+            element.innerHTML += '<div class="countdown">Countdown: <span id="countdown-timer">10:00</span></div><p contenteditable="true">Countdown Description</p>';
             break;
         case 'pricing-table':
             element.innerHTML += `
                 <div class="pricing-table">
                     <div class="pricing-plan">
-                        <h3>Basic</h3>
-                        <p class="price">$9.99/mo</p>
+                        <h3 contenteditable="true">Basic</h3>
+                        <p class="price" contenteditable="true">$9.99/mo</p>
                         <ul>
-                            <li>Feature 1</li>
-                            <li>Feature 2</li>
-                            <li>Feature 3</li>
+                            <li contenteditable="true">Feature 1</li>
+                            <li contenteditable="true">Feature 2</li>
+                            <li contenteditable="true">Feature 3</li>
                         </ul>
-                        <button>Choose Plan</button>
+                        <button contenteditable="true">Choose Plan</button>
                     </div>
                 </div>
             `;
@@ -148,11 +183,11 @@ function createCanvasElement(type) {
         case 'carousel':
             element.innerHTML += `
                 <div class="carousel">
-                    <div class="carousel-item active">Slide 1</div>
-                    <div class="carousel-item">Slide 2</div>
-                    <div class="carousel-item">Slide 3</div>
-                    <button class="carousel-prev">Previous</button>
-                    <button class="carousel-next">Next</button>
+                    <div class="carousel-item active" contenteditable="true">Slide 1</div>
+                    <div class="carousel-item" contenteditable="true">Slide 2</div>
+                    <div class="carousel-item" contenteditable="true">Slide 3</div>
+                    <button class="carousel-prev" contenteditable="true">Previous</button>
+                    <button class="carousel-next" contenteditable="true">Next</button>
                 </div>
             `;
             break;
@@ -160,12 +195,12 @@ function createCanvasElement(type) {
             element.innerHTML += `
                 <div class="accordion">
                     <div class="accordion-item">
-                        <h3 class="accordion-header">Section 1</h3>
-                        <div class="accordion-content">Content for Section 1</div>
+                        <h3 class="accordion-header" contenteditable="true">Section 1</h3>
+                        <div class="accordion-content" contenteditable="true">Content for Section 1</div>
                     </div>
                     <div class="accordion-item">
-                        <h3 class="accordion-header">Section 2</h3>
-                        <div class="accordion-content">Content for Section 2</div>
+                        <h3 class="accordion-header" contenteditable="true">Section 2</h3>
+                        <div class="accordion-content" contenteditable="true">Content for Section 2</div>
                     </div>
                 </div>
             `;
@@ -174,37 +209,38 @@ function createCanvasElement(type) {
             element.innerHTML += `
                 <div class="tabs">
                     <div class="tab-headers">
-                        <button class="tab-header active">Tab 1</button>
-                        <button class="tab-header">Tab 2</button>
+                        <button class="tab-header active" contenteditable="true">Tab 1</button>
+                        <button class="tab-header" contenteditable="true">Tab 2</button>
                     </div>
-                    <div class="tab-content active">Content for Tab 1</div>
-                    <div class="tab-content">Content for Tab 2</div>
+                    <div class="tab-content active" contenteditable="true">Content for Tab 1</div>
+                    <div class="tab-content" contenteditable="true">Content for Tab 2</div>
                 </div>
             `;
             break;
         case 'testimonial':
             element.innerHTML += `
                 <div class="testimonial">
-                    <p class="testimonial-text">"This is an amazing product!"</p>
-                    <p class="testimonial-author">- John Doe</p>
+                    <p class="testimonial-text" contenteditable="true">"This is an amazing product!"</p>
+                    <p class="testimonial-author" contenteditable="true">- John Doe</p>
                 </div>
             `;
             break;
         case 'progress-bar':
             element.innerHTML += `
                 <div class="progress-bar">
-                    <div class="progress" style="width: 70%;">70%</div>
+                    <div class="progress" style="width: 70%;" contenteditable="true">70%</div>
                 </div>
+                <p contenteditable="true">Progress Description</p>
             `;
             break;
         case 'modal':
             element.innerHTML += `
-                <button onclick="openModal('${element.id}')">Open Modal</button>
+                <button onclick="openModal('${element.id}')" contenteditable="true">Open Modal</button>
                 <div class="modal">
                     <div class="modal-content">
                         <span class="close">&times;</span>
-                        <h2>Modal Title</h2>
-                        <p>This is the modal content.</p>
+                        <h2 contenteditable="true">Modal Title</h2>
+                        <p contenteditable="true">This is the modal content.</p>
                     </div>
                 </div>
             `;
@@ -212,8 +248,8 @@ function createCanvasElement(type) {
         case 'tooltip':
             element.innerHTML += `
                 <span class="tooltip">
-                    Hover over me
-                    <span class="tooltiptext">This is a tooltip</span>
+                    <span contenteditable="true">Hover over me</span>
+                    <span class="tooltiptext" contenteditable="true">This is a tooltip</span>
                 </span>
             `;
             break;
@@ -222,35 +258,105 @@ function createCanvasElement(type) {
                 <div class="card">
                     <img src="https://via.placeholder.com/300x200" alt="Card image">
                     <div class="card-content">
-                        <h3>Card Title</h3>
-                        <p>This is some example content for the card.</p>
-                        <button>Learn More</button>
+                        <h3 contenteditable="true">Card Title</h3>
+                        <p contenteditable="true">This is some example content for the card.</p>
+                        <button contenteditable="true">Learn More</button>
                     </div>
                 </div>
             `;
             break;
+        case 'timeline':
+            element.innerHTML += `
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <h3 contenteditable="true">Event 1</h3>
+                            <p contenteditable="true">Description of event 1</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <h3 contenteditable="true">Event 2</h3>
+                            <p contenteditable="true">Description of event 2</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            break;
+        case 'gallery':
+            element.innerHTML += `
+                <div class="gallery">
+                    <img src="https://via.placeholder.com/150" alt="Gallery image 1">
+                    <img src="https://via.placeholder.com/150" alt="Gallery image 2">
+                    <img src="https://via.placeholder.com/150" alt="Gallery image 3">
+                    <img src="https://via.placeholder.com/150" alt="Gallery image 4">
+                </div>
+                <p contenteditable="true">Gallery Caption</p>
+            `;
+            break;
+        case 'faq':
+            element.innerHTML += `
+                <div class="faq">
+                    <div class="faq-item">
+                        <h3 contenteditable="true">Question 1?</h3>
+                        <p contenteditable="true">Answer to question 1.</p>
+                    </div>
+                    <div class="faq-item">
+                        <h3 contenteditable="true">Question 2?</h3>
+                        <p contenteditable="true">Answer to question 2.</p>
+                    </div>
+                </div>
+            `;
+            break;
+        case 'cta':
+            element.innerHTML += `
+                <div class="cta">
+                    <h2 contenteditable="true">Call to Action</h2>
+                    <p contenteditable="true">Sign up now and get 20% off!</p>
+                    <button contenteditable="true">Sign Up</button>
+                </div>
+            `;
+            break;
         case 'section':
-            element.innerHTML += '<div class="section" style="width: 100%; height: 200px; border: 1px dashed #ccc;"></div>';
+            element.innerHTML += '<div class="section" style="width: 100%; height: 200px; border: 1px dashed #ccc;"><p contenteditable="true">Section Content</p></div>';
             break;
         case 'container':
-            element.innerHTML += '<div class="container" style="width: 300px; height: 200px; border: 1px solid #ccc;"></div>';
+            element.innerHTML += '<div class="container" style="width: 300px; height: 200px; border: 1px solid #ccc;"><p contenteditable="true">Container Content</p></div>';
             break;
         case 'grid':
-            element.innerHTML += '<div class="grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 300px; height: 200px;"></div>';
+            element.innerHTML += `
+                <div class="grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 300px; height: 200px;">
+                    <div contenteditable="true">Grid Item 1</div>
+                    <div contenteditable="true">Grid Item 2</div>
+                    <div contenteditable="true">Grid Item 3</div>
+                </div>
+            `;
             break;
         case 'flexbox':
-            element.innerHTML += '<div class="flexbox" style="display: flex; justify-content: space-between; width: 300px; height: 100px;"><div>Item 1</div><div>Item 2</div><div>Item 3</div></div>';
+            element.innerHTML += `
+                <div class="flexbox" style="display: flex; justify-content: space-between; width: 300px; height: 100px;">
+                    <div contenteditable="true">Flex Item 1</div>
+                    <div contenteditable="true">Flex Item 2</div>
+                    <div contenteditable="true">Flex Item 3</div>
+                </div>
+            `;
             break;
         case 'columns':
-            element.innerHTML += '<div class="columns" style="column-count: 3; column-gap: 20px; width: 100%;"><p>Column 1 content</p><p>Column 2 content</p><p>Column 3 content</p></div>';
+            element.innerHTML += `
+                <div class="columns" style="column-count: 3; column-gap: 20px; width: 100%;">
+                    <p contenteditable="true">Column 1 content</p>
+                    <p contenteditable="true">Column 2 content</p>
+                    <p contenteditable="true">Column 3 content</p>
+                </div>
+            `;
             break;
         case 'masonry':
             element.innerHTML += `
                 <div class="masonry">
-                    <div class="masonry-item">Item 1</div>
-                    <div class="masonry-item">Item 2</div>
-                    <div class="masonry-item">Item 3</div>
-                    <div class="masonry-item">Item 4</div>
+                    <div class="masonry-item" contenteditable="true">Item 1</div>
+                    <div class="masonry-item" contenteditable="true">Item 2</div>
+                    <div class="masonry-item" contenteditable="true">Item 3</div>
+                    <div class="masonry-item" contenteditable="true">Item 4</div>
                 </div>
             `;
             break;
@@ -369,7 +475,7 @@ function updateElementProperty(e) {
             document.getElementById('bg-color-preview').style.backgroundColor = value;
             break;
         case 'text':
-            state.selectedElement.querySelector('h2, p, button').textContent = value;
+            updateElementText(state.selectedElement, value);
             break;
         case 'font-size':
             state.selectedElement.style.fontSize = value.includes('px') ? value : value + 'px';
@@ -385,6 +491,17 @@ function updateElementProperty(e) {
         property: property,
         value: value
     });
+}
+
+function updateElementText(element, value) {
+    const editableElements = element.querySelectorAll('[contenteditable="true"]');
+    if (editableElements.length > 0) {
+        editableElements.forEach(el => {
+            el.textContent = value;
+        });
+    } else {
+        element.textContent = value;
+    }
 }
 
 // History management
@@ -648,9 +765,18 @@ function showProperties() {
         document.getElementById('element-width').value = styles.width;
         document.getElementById('element-height').value = styles.height;
         document.getElementById('element-bgcolor').value = rgb2hex(styles.backgroundColor);
-        document.getElementById('element-text').value = state.selectedElement.textContent;
+        document.getElementById('element-text').value = getElementText(state.selectedElement);
         document.getElementById('element-font-size').value = styles.fontSize;
         document.getElementById('element-font-color').value = rgb2hex(styles.color);
+    }
+}
+
+function getElementText(element) {
+    const editableElements = element.querySelectorAll('[contenteditable="true"]');
+    if (editableElements.length > 0) {
+        return Array.from(editableElements).map(el => el.textContent).join('\n');
+    } else {
+        return element.textContent;
     }
 }
 
