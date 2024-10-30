@@ -35,9 +35,6 @@ function initDragAndDrop() {
     canvas.addEventListener('dragover', handleDragOver);
     canvas.addEventListener('drop', handleDrop);
     canvas.addEventListener('click', handleCanvasClick);
-    canvas.addEventListener('mousedown', startDragging);
-    document.addEventListener('mousemove', drag);
-    document.addEventListener('mouseup', stopDragging);
 }
 
 function handleDragStart(e) {
@@ -111,56 +108,31 @@ function createCanvasElement(type) {
         case 'image':
             element.innerHTML += `<img src="https://via.placeholder.com/300x200" alt="placeholder">`;
             break;
-        case 'section':
-            element.innerHTML += '<div class="section" style="width: 100%; height: 200px; border: 1px dashed #ccc;"></div>';
-            break;
-        case 'container':
-            element.innerHTML += '<div class="container" style="width: 300px; height: 200px; border: 1px solid #ccc;"></div>';
-            break;
-        case 'grid':
-            element.innerHTML += '<div class="grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 300px; height: 200px;"></div>';
-            break;
-        case 'spacer':
-            element.innerHTML += '<div class="spacer" style="width: 100%; height: 50px;"></div>';
+        case 'video':
+            element.innerHTML += '<video width="320" height="240" controls><source src="movie.mp4" type="video/mp4">Your browser does not support the video tag.</video>';
             break;
         case 'form':
             element.innerHTML += '<form><input type="text" placeholder="Input field"><button type="submit">Submit</button></form>';
             break;
-        case 'gallery':
-            element.innerHTML += '<div class="gallery" style="display: flex; gap: 10px;"><img src="https://via.placeholder.com/100x100" alt="Gallery 1"><img src="https://via.placeholder.com/100x100" alt="Gallery 2"><img src="https://via.placeholder.com/100x100" alt="Gallery 3"></div>';
-            break;
-        case 'video':
-            element.innerHTML += '<video width="320" height="240" controls><source src="movie.mp4" type="video/mp4">Your browser does not support the video tag.</video>';
-            break;
-        case 'map':
-            element.innerHTML += '<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.1422937950147!2d-73.98731968482413!3d40.75889497932681!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25855c6480299%3A0x55194ec5a1ae072e!2sTimes+Square!5e0!3m2!1sen!2sus!4v1510579767785" width="400" height="300" frameborder="0" style="border:0" allowfullscreen></iframe>';
-            break;
-        case 'social':
-            element.innerHTML += '<div class="social-icons"><i class="fab fa-facebook"></i><i class="fab fa-twitter"></i><i class="fab fa-instagram"></i></div>';
-            break;
-        case 'countdown':
-            element.innerHTML += '<div class="countdown">Countdown: <span id="countdown-timer">10:00</span></div>';
-            break;
-        case 'reviews':
-            element.innerHTML += '<div class="reviews"><div class="review">⭐⭐⭐⭐⭐<p>Great product!</p></div><div class="review">⭐⭐⭐⭐<p>Very good service.</p></div></div>';
-            break;
-        case 'chat':
-            element.innerHTML += '<div class="chat-widget" style="width: 300px; height: 400px; border: 1px solid #ccc;"><div class="chat-messages" style="height: 350px; overflow-y: auto;"></div><input type="text" placeholder="Type your message..."></div>';
-            break;
     }
+    
+    element.addEventListener('mousedown', startDragging);
+    element.addEventListener('click', selectElement);
     
     return element;
 }
 
 // Element manipulation functions
 function startDragging(e) {
-    if (e.target.closest('.canvas-element')) {
+    if (e.target.classList.contains('canvas-element')) {
         state.isDragging = true;
-        state.selectedElement = e.target.closest('.canvas-element');
+        state.selectedElement = e.target;
         state.initialX = e.clientX - state.selectedElement.offsetLeft;
         state.initialY = e.clientY - state.selectedElement.offsetTop;
         
         state.selectedElement.style.cursor = 'grabbing';
+        document.addEventListener('mousemove', drag);
+        document.addEventListener('mouseup', stopDragging);
     }
 }
 
@@ -185,6 +157,9 @@ function stopDragging(e) {
             elementId: state.selectedElement.id,
             position: { x: state.currentX, y: state.currentY }
         });
+        
+        document.removeEventListener('mousemove', drag);
+        document.removeEventListener('mouseup', stopDragging);
     }
 }
 
@@ -222,7 +197,6 @@ function updateElementProperty(e) {
             state.selectedElement.style.backgroundColor = value;
             document.getElementById('bg-color-preview').style.backgroundColor = value;
             break;
-        // Add more cases for other properties
     }
     
     addToHistory({
@@ -406,7 +380,6 @@ async function publishDesign() {
     }
 }
 
-// New functions to fix the errors
 function duplicateElement(elementId) {
     const originalElement = document.getElementById(elementId);
     if (originalElement) {
@@ -447,15 +420,7 @@ function handleCanvasClick(e) {
 }
 
 function updateHistoryPanel() {
-    const historyList = document.querySelector('.history-list');
-    historyList.innerHTML = '';
-    state.history.forEach((action, index) => {
-        const item = document.createElement('div');
-        item.className = 'history-item';
-        item.textContent = `Action ${index + 1}: ${action.type}`;
-        item.addEventListener('click', () => goToHistoryState(index));
-        historyList.appendChild(item);
-    });
+    // Implement if you have a history panel in your UI
 }
 
 function showProperties() {
@@ -468,7 +433,6 @@ function showProperties() {
         document.getElementById('element-width').value = styles.width;
         document.getElementById('element-height').value = styles.height;
         document.getElementById('element-bgcolor').value = rgb2hex(styles.backgroundColor);
-        // Add more property updates here
     }
 }
 

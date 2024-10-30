@@ -8,28 +8,77 @@
     <script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
 </head>
 <body>
-    <div id="top-bar">
-        <div class="logo">Website Builder</div>
-        <div class="top-controls">
-            <button class="button button-secondary" onclick="toggleCodeView()">Toggle Code View</button>
-            <button class="button button-primary" onclick="saveDesign()">Save</button>
-            <button class="button button-secondary" onclick="previewDesign()">Preview</button>
-            <button class="button button-primary" onclick="publishDesign()">Publish</button>
-        </div>
-    </div>
-    <div id="sidebar">
-        <div class="sidebar-section">
-            <h3 class="sidebar-title">Elements</h3>
-            <div class="element-grid">
-                <!-- Add your draggable elements here -->
+    <div id="app">
+        <div id="sidebar">
+            <div class="logo">Website Builder</div>
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">Elements</h3>
+                <div class="element-grid">
+                    <div class="element" draggable="true" data-type="heading">
+                        <i class="fas fa-heading"></i>
+                        <span>Heading</span>
+                    </div>
+                    <div class="element" draggable="true" data-type="text">
+                        <i class="fas fa-paragraph"></i>
+                        <span>Text</span>
+                    </div>
+                    <div class="element" draggable="true" data-type="button">
+                        <i class="fas fa-square"></i>
+                        <span>Button</span>
+                    </div>
+                    <div class="element" draggable="true" data-type="image">
+                        <i class="fas fa-image"></i>
+                        <span>Image</span>
+                    </div>
+                    <div class="element" draggable="true" data-type="video">
+                        <i class="fas fa-video"></i>
+                        <span>Video</span>
+                    </div>
+                    <div class="element" draggable="true" data-type="form">
+                        <i class="fas fa-form"></i>
+                        <span>Form</span>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-    <div id="canvas-container">
-        <div id="canvas" class="desktop"></div>
-    </div>
-    <div id="properties-panel">
-        <!-- Add your property controls here -->
+        <div id="main-content">
+            <div id="top-bar">
+                <div class="device-controls">
+                    <button class="device-button active" onclick="setDeviceView('desktop')"><i class="fas fa-desktop"></i></button>
+                    <button class="device-button" onclick="setDeviceView('tablet')"><i class="fas fa-tablet-alt"></i></button>
+                    <button class="device-button" onclick="setDeviceView('mobile')"><i class="fas fa-mobile-alt"></i></button>
+                </div>
+                <div class="top-controls">
+                    <button class="button button-secondary" onclick="toggleCodeView()">View Code</button>
+                    <button class="button button-secondary" onclick="toggleGrid()">Toggle Grid</button>
+                    <button class="button button-primary" onclick="saveDesign()">Save</button>
+                    <button class="button button-secondary" onclick="previewDesign()">Preview</button>
+                    <button class="button button-primary" onclick="publishDesign()">Publish</button>
+                </div>
+            </div>
+            <div id="canvas-container">
+                <div id="canvas" class="desktop"></div>
+                <div class="grid-overlay"></div>
+            </div>
+        </div>
+        <div id="properties-panel">
+            <h3>Element Properties</h3>
+            <div class="property-group">
+                <label for="element-width">Width:</label>
+                <input type="text" id="element-width" class="property-input">
+            </div>
+            <div class="property-group">
+                <label for="element-height">Height:</label>
+                <input type="text" id="element-height" class="property-input">
+            </div>
+            <div class="property-group">
+                <label for="element-bgcolor">Background Color:</label>
+                <div class="color-picker-wrapper">
+                    <input type="color" id="element-bgcolor" class="property-input">
+                    <div id="bg-color-preview" class="color-preview"></div>
+                </div>
+            </div>
+        </div>
     </div>
     <div id="code-view-overlay" style="display: none;">
         <div id="code-view-content">
