@@ -2,62 +2,164 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IC Site Builder</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Advanced Website Builder</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="index.css">
 </head>
 <body>
-    <div id="app">
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="#">IC Site Builder</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav">
-                        <li class="nav-item">
-                            <a class="nav-link" href="#" id="previewBtn">Preview</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#" id="publishBtn">Publish</a>
-                        </li>
-                    </ul>
+    <div id="top-bar">
+        <div class="logo">WebBuilder Pro</div>
+        <div class="responsive-controls">
+            <button class="device-button" onclick="setDeviceView('desktop')" title="Desktop View">
+                <i class="fas fa-desktop"></i>
+            </button>
+            <button class="device-button" onclick="setDeviceView('tablet')" title="Tablet View">
+                <i class="fas fa-tablet-alt"></i>
+            </button>
+            <button class="device-button" onclick="setDeviceView('mobile')" title="Mobile View">
+                <i class="fas fa-mobile-alt"></i>
+            </button>
+        </div>
+        <div class="top-controls">
+            <button class="button button-secondary" onclick="toggleGrid()">
+                <i class="fas fa-grid"></i> Grid
+            </button>
+            <button class="button button-secondary" onclick="undo()">
+                <i class="fas fa-undo"></i> Undo
+            </button>
+            <button class="button button-secondary" onclick="redo()">
+                <i class="fas fa-redo"></i> Redo
+            </button>
+            <button class="button button-secondary" onclick="previewDesign()">
+                <i class="fas fa-eye"></i> Preview
+            </button>
+            <button class="button button-primary" onclick="publishDesign()">
+                <i class="fas fa-cloud-upload-alt"></i> Publish
+            </button>
+        </div>
+    </div>
+
+    <div id="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-title">Layout Elements</div>
+            <div class="element-grid">
+                <div class="element" draggable="true" data-type="section">
+                    <i class="fas fa-columns"></i>
+                    <span class="element-label">Section</span>
+                </div>
+                <div class="element" draggable="true" data-type="container">
+                    <i class="fas fa-box"></i>
+                    <span class="element-label">Container</span>
+                </div>
+                <div class="element" draggable="true" data-type="grid">
+                    <i class="fas fa-th"></i>
+                    <span class="element-label">Grid</span>
+                </div>
+                <div class="element" draggable="true" data-type="spacer">
+                    <i class="fas fa-arrows-alt-v"></i>
+                    <span class="element-label">Spacer</span>
                 </div>
             </div>
-        </nav>
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-3 sidebar">
-                    <h3>Elements</h3>
-                    <div class="draggable" draggable="true" data-type="header">Header</div>
-                    <div class="draggable" draggable="true" data-type="paragraph">Paragraph</div>
-                    <div class="draggable" draggable="true" data-type="image">Image</div>
-                    <div class="draggable" draggable="true" data-type="button">Button</div>
-                    <h3>Pages</h3>
-                    <ul id="pageList"></ul>
-                    <button id="addPageBtn" class="btn btn-primary">Add Page</button>
-                    <h3>Design</h3>
-                    <label for="colorPicker">Theme Color:</label>
-                    <input type="color" id="colorPicker" value="#007bff">
-                    <h3>Media</h3>
-                    <input type="file" id="mediaUpload" accept="image/*">
-                    <div id="mediaLibrary"></div>
+        </div>
+
+        <div class="sidebar-section">
+            <div class="sidebar-title">Basic Elements</div>
+            <div class="element-grid">
+                <div class="element" draggable="true" data-type="heading">
+                    <i class="fas fa-heading"></i>
+                    <span class="element-label">Heading</span>
                 </div>
-                <div class="col-md-9">
-                    <div id="pageContent" class="dropzone"></div>
+                <div class="element" draggable="true" data-type="text">
+                    <i class="fas fa-font"></i>
+                    <span class="element-label">Text</span>
+                </div>
+                <div class="element" draggable="true" data-type="button">
+                    <i class="fas fa-square"></i>
+                    <span class="element-label">Button</span>
+                </div>
+                <div class="element" draggable="true" data-type="image">
+                    <i class="fas fa-image"></i>
+                    <span class="element-label">Image</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar-section">
+            <div class="sidebar-title">Advanced Elements</div>
+            <div class="element-grid">
+                <div class="element" draggable="true" data-type="form">
+                    <i class="fas fa-wpforms"></i>
+                    <span class="element-label">Form</span>
+                </div>
+                <div class="element" draggable="true" data-type="gallery">
+                    <i class="fas fa-images"></i>
+                    <span class="element-label">Gallery</span>
+                </div>
+                <div class="element" draggable="true" data-type="video">
+                    <i class="fas fa-video"></i>
+                    <span class="element-label">Video</span>
+                </div>
+                <div class="element" draggable="true" data-type="map">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span class="element-label">Map</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar-section">
+            <div class="sidebar-title">Widgets</div>
+            <div class="element-grid">
+                <div class="element" draggable="true" data-type="social">
+                    <i class="fas fa-share-alt"></i>
+                    <span class="element-label">Social</span>
+                </div>
+                <div class="element" draggable="true" data-type="countdown">
+                    <i class="fas fa-clock"></i>
+                    <span class="element-label">Countdown</span>
+                </div>
+                <div class="element" draggable="true" data-type="reviews">
+                    <i class="fas fa-star"></i>
+                    <span class="element-label">Reviews</span>
+                </div>
+                <div class="element" draggable="true" data-type="chat">
+                    <i class="fas fa-comments"></i>
+                    <span class="element-label">Chat</span>
                 </div>
             </div>
         </div>
     </div>
-    <div id="previewModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <iframe id="previewFrame"></iframe>
+
+    <div id="canvas-container">
+        <div id="canvas">
+            <div class="grid-overlay">
+                <div class="grid-column"></div>
+                <div class="grid-column"></div>
+                <div class="grid-column"></div>
+                <div class="grid-column"></div>
+                <div class="grid-column"></div>
+                <div class="grid-column"></div>
+                <div class="grid-column"></div>
+                <div class="grid-column"></div>
+                <div class="grid-column"></div>
+                <div class="grid-column"></div>
+                <div class="grid-column"></div>
+                <div class="grid-column"></div>
+            </div>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <div id="properties-panel">
+        <!-- Properties panel content will be dynamically populated -->
+    </div>
+
+    <div id="history-panel">
+        <!-- History panel content will be dynamically populated -->
+    </div>
+
+    <div class="animation-section">
+        <!-- Animation controls will be added here -->
+    </div>
+
     <script type="module" src="index.js"></script>
 </body>
 </html>

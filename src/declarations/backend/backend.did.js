@@ -3,7 +3,14 @@ export const idlFactory = ({ IDL }) => {
     'data' : IDL.Vec(IDL.Nat8),
     'name' : IDL.Text,
   });
-  const Element = IDL.Record({ 'content' : IDL.Text, 'type' : IDL.Text });
+  const Element = IDL.Record({
+    'top' : IDL.Text,
+    'height' : IDL.Text,
+    'content' : IDL.Text,
+    'left' : IDL.Text,
+    'type' : IDL.Text,
+    'width' : IDL.Text,
+  });
   const Page = IDL.Vec(Element);
   const SharedSiteData = IDL.Record({
     'siteData' : IDL.Vec(IDL.Tuple(IDL.Text, Page)),
@@ -11,7 +18,7 @@ export const idlFactory = ({ IDL }) => {
   });
   return IDL.Service({
     'getMediaLibrary' : IDL.Func([], [IDL.Vec(MediaItem)], ['query']),
-    'getSiteData' : IDL.Func([], [IDL.Opt(SharedSiteData)], ['query']),
+    'getSiteData' : IDL.Func([], [SharedSiteData], ['query']),
     'publishSite' : IDL.Func([SharedSiteData], [], []),
     'uploadMedia' : IDL.Func([IDL.Text, IDL.Vec(IDL.Nat8)], [], []),
   });

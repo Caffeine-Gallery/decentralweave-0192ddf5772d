@@ -15,6 +15,10 @@ actor {
 
   type Element = {
     type_: Text;
+    left: Text;
+    top: Text;
+    width: Text;
+    height: Text;
     content: Text;
   };
 
@@ -50,8 +54,8 @@ actor {
     pages := newSiteData.pages;
   };
 
-  public query func getSiteData() : async ?SharedSiteData {
-    ?{
+  public query func getSiteData() : async SharedSiteData {
+    {
       siteData = Iter.toArray(siteData.entries());
       pages = pages;
     }

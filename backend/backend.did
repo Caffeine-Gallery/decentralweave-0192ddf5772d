@@ -15,11 +15,15 @@ type MediaItem =
 type Element = 
  record {
    content: text;
+   height: text;
+   left: text;
+   top: text;
    "type": text;
+   width: text;
  };
 service : {
   getMediaLibrary: () -> (vec MediaItem) query;
-  getSiteData: () -> (opt SharedSiteData) query;
+  getSiteData: () -> (SharedSiteData) query;
   publishSite: (SharedSiteData) -> ();
   uploadMedia: (text, blob) -> ();
 }

@@ -2,7 +2,14 @@ import type { Principal } from '@dfinity/principal';
 import type { ActorMethod } from '@dfinity/agent';
 import type { IDL } from '@dfinity/candid';
 
-export interface Element { 'content' : string, 'type' : string }
+export interface Element {
+  'top' : string,
+  'height' : string,
+  'content' : string,
+  'left' : string,
+  'type' : string,
+  'width' : string,
+}
 export interface MediaItem { 'data' : Uint8Array | number[], 'name' : string }
 export type Page = Array<Element>;
 export interface SharedSiteData {
@@ -11,7 +18,7 @@ export interface SharedSiteData {
 }
 export interface _SERVICE {
   'getMediaLibrary' : ActorMethod<[], Array<MediaItem>>,
-  'getSiteData' : ActorMethod<[], [] | [SharedSiteData]>,
+  'getSiteData' : ActorMethod<[], SharedSiteData>,
   'publishSite' : ActorMethod<[SharedSiteData], undefined>,
   'uploadMedia' : ActorMethod<[string, Uint8Array | number[]], undefined>,
 }
