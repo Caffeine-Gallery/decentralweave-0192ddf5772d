@@ -1,27 +1,44 @@
 /* ... (previous styles remain the same) */
 
-#main-content {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    overflow: hidden;
+#code-view-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+    display: none;
 }
 
-#canvas-container,
-#code-container {
-    flex-grow: 1;
+#code-view-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    width: 80%;
+    height: 80%;
     overflow: auto;
 }
 
-#code-container {
-    background-color: #f4f4f4;
-    padding: 20px;
-}
-
 #generated-code {
-    font-family: monospace;
     white-space: pre-wrap;
     word-wrap: break-word;
+    font-family: monospace;
+}
+
+#close-code-view {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
 }
 
 /* ... (rest of the styles remain the same) */

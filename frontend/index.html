@@ -11,7 +11,7 @@
     <div id="top-bar">
         <div class="logo">Website Builder</div>
         <div class="top-controls">
-            <button class="button button-secondary" onclick="toggleView()">Toggle View</button>
+            <button class="button button-secondary" onclick="toggleCodeView()">Toggle Code View</button>
             <button class="button button-primary" onclick="saveDesign()">Save</button>
             <button class="button button-secondary" onclick="previewDesign()">Preview</button>
             <button class="button button-primary" onclick="publishDesign()">Publish</button>
@@ -25,16 +25,17 @@
             </div>
         </div>
     </div>
-    <div id="main-content">
-        <div id="canvas-container">
-            <div id="canvas" class="desktop"></div>
-        </div>
-        <div id="code-container" style="display: none;">
-            <pre><code id="generated-code"></code></pre>
-        </div>
+    <div id="canvas-container">
+        <div id="canvas" class="desktop"></div>
     </div>
     <div id="properties-panel">
         <!-- Add your property controls here -->
+    </div>
+    <div id="code-view-overlay" style="display: none;">
+        <div id="code-view-content">
+            <pre><code id="generated-code"></code></pre>
+        </div>
+        <button id="close-code-view" onclick="toggleCodeView()">Close</button>
     </div>
     <script type="module" src="index.js"></script>
 </body>
