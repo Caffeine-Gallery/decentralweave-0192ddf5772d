@@ -145,6 +145,51 @@ function createCanvasElement(type) {
                 </div>
             `;
             break;
+        case 'carousel':
+            element.innerHTML += `
+                <div class="carousel">
+                    <div class="carousel-item active">Slide 1</div>
+                    <div class="carousel-item">Slide 2</div>
+                    <div class="carousel-item">Slide 3</div>
+                    <button class="carousel-prev">Previous</button>
+                    <button class="carousel-next">Next</button>
+                </div>
+            `;
+            break;
+        case 'accordion':
+            element.innerHTML += `
+                <div class="accordion">
+                    <div class="accordion-item">
+                        <h3 class="accordion-header">Section 1</h3>
+                        <div class="accordion-content">Content for Section 1</div>
+                    </div>
+                    <div class="accordion-item">
+                        <h3 class="accordion-header">Section 2</h3>
+                        <div class="accordion-content">Content for Section 2</div>
+                    </div>
+                </div>
+            `;
+            break;
+        case 'tabs':
+            element.innerHTML += `
+                <div class="tabs">
+                    <div class="tab-headers">
+                        <button class="tab-header active">Tab 1</button>
+                        <button class="tab-header">Tab 2</button>
+                    </div>
+                    <div class="tab-content active">Content for Tab 1</div>
+                    <div class="tab-content">Content for Tab 2</div>
+                </div>
+            `;
+            break;
+        case 'testimonial':
+            element.innerHTML += `
+                <div class="testimonial">
+                    <p class="testimonial-text">"This is an amazing product!"</p>
+                    <p class="testimonial-author">- John Doe</p>
+                </div>
+            `;
+            break;
         case 'section':
             element.innerHTML += '<div class="section" style="width: 100%; height: 200px; border: 1px dashed #ccc;"></div>';
             break;
@@ -153,6 +198,12 @@ function createCanvasElement(type) {
             break;
         case 'grid':
             element.innerHTML += '<div class="grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 300px; height: 200px;"></div>';
+            break;
+        case 'flexbox':
+            element.innerHTML += '<div class="flexbox" style="display: flex; justify-content: space-between; width: 300px; height: 100px;"><div>Item 1</div><div>Item 2</div><div>Item 3</div></div>';
+            break;
+        case 'columns':
+            element.innerHTML += '<div class="columns" style="column-count: 3; column-gap: 20px; width: 100%;"><p>Column 1 content</p><p>Column 2 content</p><p>Column 3 content</p></div>';
             break;
     }
     
@@ -348,8 +399,30 @@ function applyAction(action) {
 function setDeviceView(device) {
     state.deviceView = device;
     const canvas = document.getElementById('canvas');
+    const canvasContainer = document.getElementById('canvas-container');
     if (canvas) {
         canvas.className = device;
+        
+        switch(device) {
+            case 'desktop':
+                canvas.style.width = '100%';
+                canvas.style.height = '100%';
+                canvasContainer.style.width = '100%';
+                canvasContainer.style.height = '100%';
+                break;
+            case 'tablet':
+                canvas.style.width = '768px';
+                canvas.style.height = '1024px';
+                canvasContainer.style.width = '768px';
+                canvasContainer.style.height = '1024px';
+                break;
+            case 'mobile':
+                canvas.style.width = '375px';
+                canvas.style.height = '667px';
+                canvasContainer.style.width = '375px';
+                canvasContainer.style.height = '667px';
+                break;
+        }
     }
     
     const buttons = document.querySelectorAll('.device-button');
@@ -359,22 +432,6 @@ function setDeviceView(device) {
             button.classList.add('active');
         }
     });
-    
-    // Adjust canvas size based on device view
-    switch(device) {
-        case 'desktop':
-            canvas.style.width = '100%';
-            canvas.style.height = '100%';
-            break;
-        case 'tablet':
-            canvas.style.width = '768px';
-            canvas.style.height = '1024px';
-            break;
-        case 'mobile':
-            canvas.style.width = '375px';
-            canvas.style.height = '667px';
-            break;
-    }
 }
 
 // Grid toggle
@@ -433,7 +490,7 @@ async function loadSavedDesign() {
     }
 }
 
-// Preview and publish functions
+// Preview function
 function previewDesign() {
     const previewWindow = window.open('', '_blank');
     const canvas = document.getElementById('canvas');
@@ -456,16 +513,6 @@ function previewDesign() {
         </body>
         </html>
     `);
-}
-
-async function publishDesign() {
-    try {
-        await backend.publishDesign(state.elements);
-        alert('Design published successfully!');
-    } catch (error) {
-        console.error('Error publishing design:', error);
-        alert('Error publishing design. Please try again.');
-    }
 }
 
 function duplicateElement(elementId) {
@@ -625,6 +672,76 @@ function generateJavaScript() {
                 startCountdown(tenMinutes, display);
             };
             `;
+        } else if (el.type === 'carousel') {
+            js += `
+            // Carousel functionality
+            function initCarousel() {
+                const carousels = document.querySelectorAll('.carousel');
+                carousels.forEach(carousel => {
+                    const items = carousel.querySelectorAll('.carousel-item');
+                    const prevBtn = carousel.querySelector('.carousel-prev');
+                    const nextBtn = carousel.querySelector('.carousel-next');
+                    let currentIndex = 0;
+
+                    function showItem(index) {
+                        items.forEach(item => item.classList.remove('active'));
+                        items[index].classList.add('active');
+                    }
+
+                    prevBtn.addEventListener('click', () => {
+                        currentIndex = (currentIndex - 1 + items.length) % items.length;
+                        showItem(currentIndex);
+                    });
+
+                    nextBtn.addEventListener('click', () => {
+                        currentIndex = (currentIndex + 1) % items.length;
+                        showItem(currentIndex);
+                    });
+                });
+            }
+
+            window.addEventListener('load', initCarousel);
+            `;
+        } else if (el.type === 'accordion') {
+            js += `
+            // Accordion functionality
+            function initAccordion() {
+                const accordions = document.querySelectorAll('.accordion');
+                accordions.forEach(accordion => {
+                    const headers = accordion.querySelectorAll('.accordion-header');
+                    headers.forEach(header => {
+                        header.addEventListener('click', () => {
+                            const content = header.nextElementSibling;
+                            content.style.display = content.style.display === 'none' ? 'block' : 'none';
+                        });
+                    });
+                });
+            }
+
+            window.addEventListener('load', initAccordion);
+            `;
+        } else if (el.type === 'tabs') {
+            js += `
+            // Tabs functionality
+            function initTabs() {
+                const tabsContainers = document.querySelectorAll('.tabs');
+                tabsContainers.forEach(container => {
+                    const headers = container.querySelectorAll('.tab-header');
+                    const contents = container.querySelectorAll('.tab-content');
+
+                    headers.forEach((header, index) => {
+                        header.addEventListener('click', () => {
+                            headers.forEach(h => h.classList.remove('active'));
+                            contents.forEach(c => c.classList.remove('active'));
+                            header.classList.add('active');
+                            contents[index].classList.add('active');
+                        });
+                    });
+                });
+            }
+
+            window.addEventListener('load', initTabs);
+            `;
         }
     });
     
@@ -653,7 +770,7 @@ window.toggleGrid = toggleGrid;
 window.undo = undo;
 window.redo = redo;
 window.previewDesign = previewDesign;
-window.publishDesign = publishDesign;
+window.saveDesign = saveDesign;
 window.duplicateElement = duplicateElement;
 window.deleteElement = deleteElement;
 window.toggleCodeView = toggleCodeView;
