@@ -334,12 +334,17 @@ function applyAction(action) {
 function setDeviceView(device) {
     state.deviceView = device;
     const canvas = document.getElementById('canvas');
-    canvas.className = device;
+    if (canvas) {
+        canvas.className = device;
+    }
     
-    document.querySelectorAll('.device-button').forEach(button => {
+    const buttons = document.querySelectorAll('.device-button');
+    buttons.forEach(button => {
         button.classList.remove('active');
+        if (button.onclick.toString().includes(device)) {
+            button.classList.add('active');
+        }
     });
-    event.target.classList.add('active');
 }
 
 // Grid toggle
@@ -370,23 +375,27 @@ async function loadSavedDesign() {
         const savedDesign = await backend.getDesign();
         if (savedDesign) {
             const canvas = document.getElementById('canvas');
-            canvas.innerHTML = ''; // Clear existing elements
-            
-            if (savedDesign.elements && Array.isArray(savedDesign.elements)) {
-                savedDesign.elements.forEach(el => {
-                    const element = createCanvasElement(el.type);
-                    element.style.cssText = el.styles;
-                    element.style.left = el.position.x + 'px';
-                    element.style.top = el.position.y + 'px';
-                    canvas.appendChild(element);
-                });
+            if (canvas) {
+                canvas.innerHTML = ''; // Clear existing elements
+                
+                if (savedDesign.elements && Array.isArray(savedDesign.elements)) {
+                    savedDesign.elements.forEach(el => {
+                        const element = createCanvasElement(el.type);
+                        element.style.cssText = el.styles;
+                        element.style.left = el.position.x + 'px';
+                        element.style.top = el.position.y + 'px';
+                        canvas.appendChild(element);
+                    });
+                }
+                
+                state.elements = savedDesign.elements || [];
+                state.history = savedDesign.history || [];
+                state.historyIndex = state.history.length - 1;
+                setDeviceView(savedDesign.deviceView || 'desktop');
+                updateHistoryPanel();
+            } else {
+                console.error('Canvas element not found');
             }
-            
-            state.elements = savedDesign.elements || [];
-            state.history = savedDesign.history || [];
-            state.historyIndex = state.history.length - 1;
-            setDeviceView(savedDesign.deviceView || 'desktop');
-            updateHistoryPanel();
         }
     } catch (error) {
         console.error('Error loading saved design:', error);
