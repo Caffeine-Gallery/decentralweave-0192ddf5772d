@@ -1,29 +1,21 @@
-type SharedSiteData = 
- record {
-   pages: vec text;
-   siteData: vec record {
-                   text;
-                   Page;
-                 };
- };
-type Page = vec Element;
-type MediaItem = 
- record {
-   data: blob;
-   name: text;
- };
 type Element = 
  record {
-   content: text;
-   height: text;
-   left: text;
-   top: text;
+   id: text;
+   position: record {
+               x: nat;
+               y: nat;
+             };
+   styles: text;
    "type": text;
-   width: text;
+ };
+type Design = 
+ record {
+   deviceView: text;
+   elements: vec Element;
+   history: vec text;
  };
 service : {
-  getMediaLibrary: () -> (vec MediaItem) query;
-  getSiteData: () -> (SharedSiteData) query;
-  publishSite: (SharedSiteData) -> ();
-  uploadMedia: (text, blob) -> ();
+  getDesign: () -> (opt Design) query;
+  publishDesign: (vec Element) -> ();
+  saveDesign: (Design) -> ();
 }

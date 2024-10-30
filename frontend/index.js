@@ -1,233 +1,303 @@
 import { backend } from 'declarations/backend';
 
-let currentPage = 'home';
-let pages = ['home'];
-let siteData = {
-    home: []
+// State management
+let state = {
+    selectedElement: null,
+    history: [],
+    historyIndex: -1,
+    isDragging: false,
+    currentX: 0,
+    currentY: 0,
+    initialX: 0,
+    initialY: 0,
+    xOffset: 0,
+    yOffset: 0,
+    deviceView: 'desktop',
+    showGrid: false,
+    elements: []
 };
-let history = [];
-let historyIndex = -1;
 
-document.addEventListener('DOMContentLoaded', async () => {
-    setupDragAndDrop();
-    setupResponsiveControls();
-    setupGridToggle();
-    setupUndoRedo();
-    setupPreviewAndPublish();
-    await loadSiteData();
-});
+// Initialize the builder
+function initBuilder() {
+    initDragAndDrop();
+    initPropertyPanel();
+    initHistory();
+    loadSavedDesign();
+}
 
-function setupDragAndDrop() {
-    const draggables = document.querySelectorAll('.element');
-    const dropzone = document.getElementById('canvas');
-
-    draggables.forEach(draggable => {
-        draggable.addEventListener('dragstart', (e) => {
-            e.dataTransfer.setData('text/plain', e.target.dataset.type);
-        });
+// Drag and Drop functionality
+function initDragAndDrop() {
+    document.querySelectorAll('.element').forEach(element => {
+        element.addEventListener('dragstart', handleDragStart);
     });
 
-    dropzone.addEventListener('dragover', (e) => {
-        e.preventDefault();
-    });
+    const canvas = document.getElementById('canvas');
+    canvas.addEventListener('dragover', handleDragOver);
+    canvas.addEventListener('drop', handleDrop);
+    canvas.addEventListener('click', handleCanvasClick);
+}
 
-    dropzone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        const type = e.dataTransfer.getData('text');
-        const element = createElement(type);
-        element.style.left = `${e.clientX - dropzone.offsetLeft}px`;
-        element.style.top = `${e.clientY - dropzone.offsetTop}px`;
-        dropzone.appendChild(element);
-        updateSiteData();
-        addToHistory();
+function handleDragStart(e) {
+    e.dataTransfer.setData('text/plain', e.target.dataset.type);
+}
+
+function handleDragOver(e) {
+    e.preventDefault();
+}
+
+function handleDrop(e) {
+    e.preventDefault();
+    const type = e.dataTransfer.getData('text/plain');
+    const element = createCanvasElement(type);
+    
+    const canvasRect = canvas.getBoundingClientRect();
+    const x = e.clientX - canvasRect.left;
+    const y = e.clientY - canvasRect.top;
+    
+    element.style.left = x + 'px';
+    element.style.top = y + 'px';
+    
+    canvas.appendChild(element);
+    element.classList.add('animate-entrance');
+    
+    addToHistory({
+        type: 'add',
+        element: element.outerHTML,
+        position: { x, y }
+    });
+    
+    state.elements.push({
+        id: element.id,
+        type: type,
+        position: { x, y },
+        styles: element.style.cssText
     });
 }
 
-function createElement(type) {
+function createCanvasElement(type) {
     const element = document.createElement('div');
-    element.classList.add('canvas-element');
-    element.setAttribute('draggable', 'true');
+    element.className = 'canvas-element';
+    element.id = 'element-' + Date.now();
     element.dataset.type = type;
-
-    const content = document.createElement('div');
-    content.classList.add('element-content');
-
-    switch (type) {
-        case 'heading':
-            content.innerHTML = '<h2>Heading</h2>';
-            break;
-        case 'text':
-            content.innerHTML = '<p>Text content</p>';
-            break;
-        case 'button':
-            content.innerHTML = '<button>Button</button>';
-            break;
-        case 'image':
-            content.innerHTML = '<img src="https://via.placeholder.com/150" alt="Placeholder">';
-            break;
-        // Add more cases for other element types
-    }
-
-    element.appendChild(content);
-
+    
+    // Add element controls
     const controls = document.createElement('div');
-    controls.classList.add('element-controls');
+    controls.className = 'element-controls';
     controls.innerHTML = `
-        <button class="control-button" onclick="deleteElement(this.parentElement.parentElement)">
+        <button class="control-button" onclick="duplicateElement('${element.id}')">
+            <i class="fas fa-copy"></i>
+        </button>
+        <button class="control-button" onclick="deleteElement('${element.id}')">
             <i class="fas fa-trash"></i>
         </button>
     `;
+    
     element.appendChild(controls);
-
-    element.addEventListener('click', (e) => {
-        document.querySelectorAll('.canvas-element').forEach(el => el.classList.remove('selected'));
-        element.classList.add('selected');
-        showProperties(element);
-    });
-
+    
+    // Set default content based on type
+    switch(type) {
+        case 'heading':
+            element.innerHTML += '<h2>New Heading</h2>';
+            break;
+        case 'text':
+            element.innerHTML += '<p>New Text Block</p>';
+            break;
+        case 'button':
+            element.innerHTML += '<button class="button button-primary">New Button</button>';
+            break;
+        case 'image':
+            element.innerHTML += `<img src="https://via.placeholder.com/300x200" alt="placeholder">`;
+            break;
+        // Add more cases for other element types
+    }
+    
+    // Add event listeners
+    element.addEventListener('mousedown', startDragging);
+    element.addEventListener('click', selectElement);
+    
     return element;
 }
 
-function showProperties(element) {
-    const propertiesPanel = document.getElementById('properties-panel');
-    propertiesPanel.classList.add('active');
-    propertiesPanel.innerHTML = `
-        <div class="property-group">
-            <div class="property-group-title">Element Properties</div>
-            <div class="property-row">
-                <div class="property-label">Width</div>
-                <input type="text" class="property-input" value="${element.style.width}" onchange="updateElementProperty(this, 'width')">
-            </div>
-            <div class="property-row">
-                <div class="property-label">Height</div>
-                <input type="text" class="property-input" value="${element.style.height}" onchange="updateElementProperty(this, 'height')">
-            </div>
-            <!-- Add more properties as needed -->
-        </div>
-    `;
-}
-
-function updateElementProperty(input, property) {
-    const selectedElement = document.querySelector('.canvas-element.selected');
-    if (selectedElement) {
-        selectedElement.style[property] = input.value;
-        updateSiteData();
-        addToHistory();
+// Element manipulation functions
+function startDragging(e) {
+    if (e.target.classList.contains('canvas-element')) {
+        state.isDragging = true;
+        state.selectedElement = e.target;
+        state.initialX = e.clientX - state.xOffset;
+        state.initialY = e.clientY - state.yOffset;
     }
 }
 
-function deleteElement(element) {
-    element.remove();
-    updateSiteData();
-    addToHistory();
+function selectElement(e) {
+    e.stopPropagation();
+    if (state.selectedElement) {
+        state.selectedElement.classList.remove('selected');
+    }
+    
+    state.selectedElement = e.target.closest('.canvas-element');
+    state.selectedElement.classList.add('selected');
+    showProperties();
 }
 
-function setupResponsiveControls() {
-    const deviceButtons = document.querySelectorAll('.device-button');
-    deviceButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            deviceButtons.forEach(btn => btn.classList.remove('active'));
-            button.classList.add('active');
-        });
+// Property panel functions
+function initPropertyPanel() {
+    const inputs = document.querySelectorAll('.property-input');
+    inputs.forEach(input => {
+        input.addEventListener('change', updateElementProperty);
     });
 }
 
+function updateElementProperty(e) {
+    if (!state.selectedElement) return;
+    
+    const property = e.target.id.replace('element-', '');
+    const value = e.target.value;
+    
+    switch(property) {
+        case 'width':
+        case 'height':
+            state.selectedElement.style[property] = value.includes('px') ? value : value + 'px';
+            break;
+        case 'bgcolor':
+            state.selectedElement.style.backgroundColor = value;
+            document.getElementById('bg-color-preview').style.backgroundColor = value;
+            break;
+        // Add more cases for other properties
+    }
+    
+    addToHistory({
+        type: 'modify',
+        elementId: state.selectedElement.id,
+        property: property,
+        value: value
+    });
+}
+
+// History management
+function addToHistory(action) {
+    state.history = state.history.slice(0, state.historyIndex + 1);
+    state.history.push(action);
+    state.historyIndex++;
+    updateHistoryPanel();
+}
+
+function undo() {
+    if (state.historyIndex < 0) return;
+    
+    const action = state.history[state.historyIndex];
+    revertAction(action);
+    state.historyIndex--;
+    updateHistoryPanel();
+}
+
+function redo() {
+    if (state.historyIndex >= state.history.length - 1) return;
+    
+    state.historyIndex++;
+    const action = state.history[state.historyIndex];
+    applyAction(action);
+    updateHistoryPanel();
+}
+
+// Device view functions
 function setDeviceView(device) {
+    state.deviceView = device;
     const canvas = document.getElementById('canvas');
     canvas.className = device;
-}
-
-function setupGridToggle() {
-    const gridOverlay = document.querySelector('.grid-overlay');
-    let gridActive = false;
-
-    window.toggleGrid = () => {
-        gridActive = !gridActive;
-        gridOverlay.classList.toggle('active', gridActive);
-    };
-}
-
-function setupUndoRedo() {
-    window.undo = () => {
-        if (historyIndex > 0) {
-            historyIndex--;
-            loadHistoryState();
-        }
-    };
-
-    window.redo = () => {
-        if (historyIndex < history.length - 1) {
-            historyIndex++;
-            loadHistoryState();
-        }
-    };
-}
-
-function addToHistory() {
-    const currentState = JSON.parse(JSON.stringify(siteData));
-    history = history.slice(0, historyIndex + 1);
-    history.push(currentState);
-    historyIndex = history.length - 1;
-}
-
-function loadHistoryState() {
-    siteData = JSON.parse(JSON.stringify(history[historyIndex]));
-    renderCanvas();
-}
-
-function renderCanvas() {
-    const canvas = document.getElementById('canvas');
-    canvas.innerHTML = '';
-    siteData[currentPage].forEach(elementData => {
-        const element = createElement(elementData.type);
-        element.style.left = elementData.left;
-        element.style.top = elementData.top;
-        element.style.width = elementData.width;
-        element.style.height = elementData.height;
-        element.querySelector('.element-content').innerHTML = elementData.content;
-        canvas.appendChild(element);
+    
+    document.querySelectorAll('.device-button').forEach(button => {
+        button.classList.remove('active');
     });
+    event.target.classList.add('active');
 }
 
-function updateSiteData() {
-    const canvas = document.getElementById('canvas');
-    siteData[currentPage] = Array.from(canvas.querySelectorAll('.canvas-element')).map(element => ({
-        type: element.dataset.type,
-        left: element.style.left,
-        top: element.style.top,
-        width: element.style.width,
-        height: element.style.height,
-        content: element.querySelector('.element-content').innerHTML
-    }));
+// Grid toggle
+function toggleGrid() {
+    state.showGrid = !state.showGrid;
+    document.querySelector('.grid-overlay').classList.toggle('active');
 }
 
-function setupPreviewAndPublish() {
-    window.previewDesign = () => {
-        // Implement preview functionality
-        console.log('Preview functionality to be implemented');
+// Save and load functions
+async function saveDesign() {
+    const design = {
+        elements: state.elements,
+        history: state.history,
+        deviceView: state.deviceView
     };
-
-    window.publishDesign = async () => {
-        try {
-            await backend.publishSite({ siteData, pages });
-            alert('Site published successfully!');
-        } catch (error) {
-            console.error('Error publishing site:', error);
-            alert('Error publishing site. Please try again.');
-        }
-    };
-}
-
-async function loadSiteData() {
+    
     try {
-        const loadedData = await backend.getSiteData();
-        if (loadedData) {
-            siteData = loadedData.siteData;
-            pages = loadedData.pages;
-            renderCanvas();
-            addToHistory();
-        }
+        await backend.saveDesign(design);
+        alert('Design saved successfully!');
     } catch (error) {
-        console.error('Error loading site data:', error);
+        console.error('Error saving design:', error);
+        alert('Error saving design. Please try again.');
     }
 }
+
+async function loadSavedDesign() {
+    try {
+        const savedDesign = await backend.getDesign();
+        if (savedDesign) {
+            const design = savedDesign;
+            design.elements.forEach(el => {
+                const element = createCanvasElement(el.type);
+                element.style.cssText = el.styles;
+                canvas.appendChild(element);
+            });
+            
+            state.elements = design.elements;
+            state.history = design.history;
+            setDeviceView(design.deviceView);
+        }
+    } catch (error) {
+        console.error('Error loading saved design:', error);
+    }
+}
+
+// Preview and publish functions
+function previewDesign() {
+    const previewWindow = window.open('', '_blank');
+    const canvas = document.getElementById('canvas');
+    
+    previewWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Preview</title>
+            <style>
+                ${document.querySelector('style').textContent}
+                .canvas-element { position: relative !important; }
+                .element-controls { display: none; }
+            </style>
+        </head>
+        <body>
+            <div id="canvas" class="${state.deviceView}">
+                ${canvas.innerHTML}
+            </div>
+        </body>
+        </html>
+    `);
+}
+
+async function publishDesign() {
+    try {
+        await backend.publishDesign(state.elements);
+        alert('Design published successfully!');
+    } catch (error) {
+        console.error('Error publishing design:', error);
+        alert('Error publishing design. Please try again.');
+    }
+}
+
+// Initialize the builder
+document.addEventListener('DOMContentLoaded', initBuilder);
+
+// Expose functions to window object for HTML onclick attributes
+window.setDeviceView = setDeviceView;
+window.toggleGrid = toggleGrid;
+window.undo = undo;
+window.redo = redo;
+window.previewDesign = previewDesign;
+window.publishDesign = publishDesign;
+window.duplicateElement = duplicateElement;
+window.deleteElement = deleteElement;

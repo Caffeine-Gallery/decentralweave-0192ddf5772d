@@ -8,66 +8,46 @@ import Nat "mo:base/Nat";
 import Text "mo:base/Text";
 
 actor {
-  type MediaItem = {
-    name: Text;
-    data: Blob;
-  };
-
   type Element = {
+    id: Text;
     type_: Text;
-    left: Text;
-    top: Text;
-    width: Text;
-    height: Text;
-    content: Text;
+    position: { x: Nat; y: Nat };
+    styles: Text;
   };
 
-  type Page = [Element];
-
-  type SharedSiteData = {
-    siteData: [(Text, Page)];
-    pages: [Text];
+  type Design = {
+    elements: [Element];
+    history: [Text];
+    deviceView: Text;
   };
 
-  stable var mediaEntries : [(Text, MediaItem)] = [];
-  var mediaLibrary = HashMap.fromIter<Text, MediaItem>(mediaEntries.vals(), 10, Text.equal, Text.hash);
+  stable var designEntries : [(Text, Design)] = [];
+  var designs = HashMap.fromIter<Text, Design>(designEntries.vals(), 10, Text.equal, Text.hash);
 
-  stable var siteDataEntries : [(Text, Page)] = [];
-  var siteData = HashMap.fromIter<Text, Page>(siteDataEntries.vals(), 10, Text.equal, Text.hash);
+  public func saveDesign(design: Design) : async () {
+    designs.put("current", design);
+  };
 
-  stable var pages : [Text] = ["home"];
+  public query func getDesign() : async ?Design {
+    designs.get("current")
+  };
 
-  public func uploadMedia(name: Text, data: Blob) : async () {
-    let mediaItem : MediaItem = {
-      name = name;
-      data = data;
+  public func publishDesign(elements: [Element]) : async () {
+    // Implement publishing logic here
+    // For now, we'll just save it as a published design
+    let publishedDesign : Design = {
+      elements = elements;
+      history = [];
+      deviceView = "desktop";
     };
-    mediaLibrary.put(name, mediaItem);
-  };
-
-  public query func getMediaLibrary() : async [MediaItem] {
-    Iter.toArray(mediaLibrary.vals())
-  };
-
-  public func publishSite(newSiteData: SharedSiteData) : async () {
-    siteData := HashMap.fromIter<Text, Page>(newSiteData.siteData.vals(), 10, Text.equal, Text.hash);
-    pages := newSiteData.pages;
-  };
-
-  public query func getSiteData() : async SharedSiteData {
-    {
-      siteData = Iter.toArray(siteData.entries());
-      pages = pages;
-    }
+    designs.put("published", publishedDesign);
   };
 
   system func preupgrade() {
-    mediaEntries := Iter.toArray(mediaLibrary.entries());
-    siteDataEntries := Iter.toArray(siteData.entries());
+    designEntries := Iter.toArray(designs.entries());
   };
 
   system func postupgrade() {
-    mediaLibrary := HashMap.fromIter<Text, MediaItem>(mediaEntries.vals(), 10, Text.equal, Text.hash);
-    siteData := HashMap.fromIter<Text, Page>(siteDataEntries.vals(), 10, Text.equal, Text.hash);
+    designs := HashMap.fromIter<Text, Design>(designEntries.vals(), 10, Text.equal, Text.hash);
   };
 }

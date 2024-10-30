@@ -149,15 +149,96 @@
     </div>
 
     <div id="properties-panel">
-        <!-- Properties panel content will be dynamically populated -->
+        <div class="property-group">
+            <div class="property-group-title">Size & Position</div>
+            <div class="property-row">
+                <div class="property-label">Width</div>
+                <input type="text" class="property-input" id="element-width">
+            </div>
+            <div class="property-row">
+                <div class="property-label">Height</div>
+                <input type="text" class="property-input" id="element-height">
+            </div>
+            <div class="property-row">
+                <div class="property-label">Padding</div>
+                <input type="text" class="property-input" id="element-padding">
+            </div>
+            <div class="property-row">
+                <div class="property-label">Margin</div>
+                <input type="text" class="property-input" id="element-margin">
+            </div>
+        </div>
+
+        <div class="property-group">
+            <div class="property-group-title">Style</div>
+            <div class="property-row">
+                <div class="property-label">Background Color</div>
+                <div class="color-picker-wrapper">
+                    <div class="color-preview" id="bg-color-preview"></div>
+                    <input type="color" class="property-input" id="element-bgcolor">
+                </div>
+            </div>
+            <div class="property-row">
+                <div class="property-label">Border Color</div>
+                <div class="color-picker-wrapper">
+                    <div class="color-preview" id="border-color-preview"></div>
+                    <input type="color" class="property-input" id="element-border-color">
+                </div>
+            </div>
+            <div class="property-row">
+                <div class="property-label">Border Width</div>
+                <input type="number" class="property-input" id="element-border-width" min="0" max="20">
+            </div>
+            <div class="property-row">
+                <div class="property-label">Border Radius</div>
+                <input type="number" class="property-input" id="element-border-radius" min="0" max="50">
+            </div>
+        </div>
+
+        <div class="property-group">
+            <div class="property-group-title">Typography</div>
+            <div class="property-row">
+                <div class="property-label">Font Family</div>
+                <select class="property-input" id="element-font-family">
+                    <option value="Arial">Arial</option>
+                    <option value="Helvetica">Helvetica</option>
+                    <option value="Times New Roman">Times New Roman</option>
+                    <option value="Georgia">Georgia</option>
+                </select>
+            </div>
+            <div class="property-row">
+                <div class="property-label">Font Size</div>
+                <input type="number" class="property-input" id="element-font-size" min="8" max="72">
+            </div>
+            <div class="property-row">
+                <div class="property-label">Font Color</div>
+                <div class="color-picker-wrapper">
+                    <div class="color-preview" id="font-color-preview"></div>
+                    <input type="color" class="property-input" id="element-color">
+                </div>
+            </div>
+        </div>
+
+        <div class="property-group">
+            <div class="property-group-title">Effects</div>
+            <div class="property-row">
+                <div class="property-label">Opacity</div>
+                <input type="range" class="property-input" id="element-opacity" min="0" max="1" step="0.1">
+            </div>
+            <div class="property-row">
+                <div class="property-label">Shadow</div>
+                <select class="property-input" id="element-shadow">
+                    <option value="none">None</option>
+                    <option value="light">Light</option>
+                    <option value="medium">Medium</option>
+                    <option value="strong">Strong</option>
+                </select>
+            </div>
+        </div>
     </div>
 
     <div id="history-panel">
-        <!-- History panel content will be dynamically populated -->
-    </div>
-
-    <div class="animation-section">
-        <!-- Animation controls will be added here -->
+        <div class="history-list"></div>
     </div>
 
     <script type="module" src="index.js"></script>
