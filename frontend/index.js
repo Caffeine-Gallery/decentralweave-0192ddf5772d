@@ -19,26 +19,39 @@ let state = {
 
 // Initialize the builder
 function initBuilder() {
-    initDragAndDrop();
-    initPropertyPanel();
-    initHistory();
-    loadSavedDesign();
-    setDeviceView('desktop'); // Set initial device view
+    console.log('Initializing builder...');
+    try {
+        initDragAndDrop();
+        initPropertyPanel();
+        initHistory();
+        loadSavedDesign();
+        setDeviceView('desktop'); // Set initial device view
+        console.log('Builder initialized successfully');
+    } catch (error) {
+        console.error('Error initializing builder:', error);
+    }
 }
 
 // Drag and Drop functionality
 function initDragAndDrop() {
-    document.querySelectorAll('.element').forEach(element => {
+    console.log('Initializing drag and drop...');
+    const elements = document.querySelectorAll('.element');
+    elements.forEach(element => {
         element.addEventListener('dragstart', handleDragStart);
     });
 
     const canvas = document.getElementById('canvas');
-    canvas.addEventListener('dragover', handleDragOver);
-    canvas.addEventListener('drop', handleDrop);
-    canvas.addEventListener('click', handleCanvasClick);
+    if (canvas) {
+        canvas.addEventListener('dragover', handleDragOver);
+        canvas.addEventListener('drop', handleDrop);
+        canvas.addEventListener('click', handleCanvasClick);
+    } else {
+        console.error('Canvas element not found');
+    }
 }
 
 function handleDragStart(e) {
+    console.log('Drag started');
     e.dataTransfer.setData('text/plain', e.target.dataset.type);
 }
 
@@ -47,18 +60,19 @@ function handleDragOver(e) {
 }
 
 function handleDrop(e) {
+    console.log('Element dropped');
     e.preventDefault();
     const type = e.dataTransfer.getData('text/plain');
     const element = createCanvasElement(type);
     
-    const canvasRect = canvas.getBoundingClientRect();
+    const canvasRect = e.target.getBoundingClientRect();
     const x = e.clientX - canvasRect.left;
     const y = e.clientY - canvasRect.top;
     
     element.style.left = x + 'px';
     element.style.top = y + 'px';
     
-    canvas.appendChild(element);
+    e.target.appendChild(element);
     element.classList.add('animate-entrance');
     
     addToHistory({
@@ -76,6 +90,7 @@ function handleDrop(e) {
 }
 
 function createCanvasElement(type) {
+    console.log('Creating canvas element:', type);
     const element = document.createElement('div');
     element.className = 'canvas-element';
     element.id = 'element-' + Date.now();
@@ -109,302 +124,7 @@ function createCanvasElement(type) {
         case 'image':
             element.innerHTML += `<img src="https://via.placeholder.com/300x200" alt="placeholder"><p contenteditable="true">Image Caption</p>`;
             break;
-        case 'video':
-            element.innerHTML += '<video width="320" height="240" controls><source src="movie.mp4" type="video/mp4">Your browser does not support the video tag.</video><p contenteditable="true">Video Caption</p>';
-            break;
-        case 'form':
-            element.innerHTML += `
-                <form>
-                    <label contenteditable="true">Name:</label>
-                    <input type="text" placeholder="Enter your name">
-                    <label contenteditable="true">Email:</label>
-                    <input type="email" placeholder="Enter your email">
-                    <button type="submit" contenteditable="true">Submit</button>
-                </form>
-            `;
-            break;
-        case 'list':
-            element.innerHTML += `
-                <ul>
-                    <li contenteditable="true">List Item 1</li>
-                    <li contenteditable="true">List Item 2</li>
-                    <li contenteditable="true">List Item 3</li>
-                </ul>
-            `;
-            break;
-        case 'table':
-            element.innerHTML += `
-                <table>
-                    <tr>
-                        <th contenteditable="true">Header 1</th>
-                        <th contenteditable="true">Header 2</th>
-                    </tr>
-                    <tr>
-                        <td contenteditable="true">Row 1, Cell 1</td>
-                        <td contenteditable="true">Row 1, Cell 2</td>
-                    </tr>
-                    <tr>
-                        <td contenteditable="true">Row 2, Cell 1</td>
-                        <td contenteditable="true">Row 2, Cell 2</td>
-                    </tr>
-                </table>
-            `;
-            break;
-        case 'social-icons':
-            element.innerHTML += `
-                <div class="social-icons">
-                    <i class="fab fa-facebook" contenteditable="true" title="Edit link"></i>
-                    <i class="fab fa-twitter" contenteditable="true" title="Edit link"></i>
-                    <i class="fab fa-instagram" contenteditable="true" title="Edit link"></i>
-                </div>
-            `;
-            break;
-        case 'map':
-            element.innerHTML += '<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.1422937950147!2d-73.98731968482413!3d40.75889497932681!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25855c6480299%3A0x55194ec5a1ae072e!2sTimes+Square!5e0!3m2!1sen!2sus!4v1510579767785" width="400" height="300" frameborder="0" style="border:0" allowfullscreen></iframe><p contenteditable="true">Map Caption</p>';
-            break;
-        case 'countdown':
-            element.innerHTML += '<div class="countdown">Countdown: <span id="countdown-timer">10:00</span></div><p contenteditable="true">Countdown Description</p>';
-            break;
-        case 'pricing-table':
-            element.innerHTML += `
-                <div class="pricing-table">
-                    <div class="pricing-plan">
-                        <h3 contenteditable="true">Basic</h3>
-                        <p class="price" contenteditable="true">$9.99/mo</p>
-                        <ul>
-                            <li contenteditable="true">Feature 1</li>
-                            <li contenteditable="true">Feature 2</li>
-                            <li contenteditable="true">Feature 3</li>
-                        </ul>
-                        <button contenteditable="true">Choose Plan</button>
-                    </div>
-                </div>
-            `;
-            break;
-        case 'carousel':
-            element.innerHTML += `
-                <div class="carousel">
-                    <div class="carousel-item active" contenteditable="true">Slide 1</div>
-                    <div class="carousel-item" contenteditable="true">Slide 2</div>
-                    <div class="carousel-item" contenteditable="true">Slide 3</div>
-                    <button class="carousel-prev" contenteditable="true">Previous</button>
-                    <button class="carousel-next" contenteditable="true">Next</button>
-                </div>
-            `;
-            break;
-        case 'accordion':
-            element.innerHTML += `
-                <div class="accordion">
-                    <div class="accordion-item">
-                        <h3 class="accordion-header" contenteditable="true">Section 1</h3>
-                        <div class="accordion-content" contenteditable="true">Content for Section 1</div>
-                    </div>
-                    <div class="accordion-item">
-                        <h3 class="accordion-header" contenteditable="true">Section 2</h3>
-                        <div class="accordion-content" contenteditable="true">Content for Section 2</div>
-                    </div>
-                </div>
-            `;
-            break;
-        case 'tabs':
-            element.innerHTML += `
-                <div class="tabs">
-                    <div class="tab-headers">
-                        <button class="tab-header active" contenteditable="true">Tab 1</button>
-                        <button class="tab-header" contenteditable="true">Tab 2</button>
-                    </div>
-                    <div class="tab-content active" contenteditable="true">Content for Tab 1</div>
-                    <div class="tab-content" contenteditable="true">Content for Tab 2</div>
-                </div>
-            `;
-            break;
-        case 'testimonial':
-            element.innerHTML += `
-                <div class="testimonial">
-                    <p class="testimonial-text" contenteditable="true">"This is an amazing product!"</p>
-                    <p class="testimonial-author" contenteditable="true">- John Doe</p>
-                </div>
-            `;
-            break;
-        case 'progress-bar':
-            element.innerHTML += `
-                <div class="progress-bar">
-                    <div class="progress" style="width: 70%;" contenteditable="true">70%</div>
-                </div>
-                <p contenteditable="true">Progress Description</p>
-            `;
-            break;
-        case 'modal':
-            element.innerHTML += `
-                <button onclick="openModal('${element.id}')" contenteditable="true">Open Modal</button>
-                <div class="modal">
-                    <div class="modal-content">
-                        <span class="close">&times;</span>
-                        <h2 contenteditable="true">Modal Title</h2>
-                        <p contenteditable="true">This is the modal content.</p>
-                    </div>
-                </div>
-            `;
-            break;
-        case 'tooltip':
-            element.innerHTML += `
-                <span class="tooltip">
-                    <span contenteditable="true">Hover over me</span>
-                    <span class="tooltiptext" contenteditable="true">This is a tooltip</span>
-                </span>
-            `;
-            break;
-        case 'card':
-            element.innerHTML += `
-                <div class="card">
-                    <img src="https://via.placeholder.com/300x200" alt="Card image">
-                    <div class="card-content">
-                        <h3 contenteditable="true">Card Title</h3>
-                        <p contenteditable="true">This is some example content for the card.</p>
-                        <button contenteditable="true">Learn More</button>
-                    </div>
-                </div>
-            `;
-            break;
-        case 'timeline':
-            element.innerHTML += `
-                <div class="timeline">
-                    <div class="timeline-item">
-                        <div class="timeline-content">
-                            <h3 contenteditable="true">Event 1</h3>
-                            <p contenteditable="true">Description of event 1</p>
-                        </div>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-content">
-                            <h3 contenteditable="true">Event 2</h3>
-                            <p contenteditable="true">Description of event 2</p>
-                        </div>
-                    </div>
-                </div>
-            `;
-            break;
-        case 'gallery':
-            element.innerHTML += `
-                <div class="gallery">
-                    <img src="https://via.placeholder.com/150" alt="Gallery image 1">
-                    <img src="https://via.placeholder.com/150" alt="Gallery image 2">
-                    <img src="https://via.placeholder.com/150" alt="Gallery image 3">
-                    <img src="https://via.placeholder.com/150" alt="Gallery image 4">
-                </div>
-                <p contenteditable="true">Gallery Caption</p>
-            `;
-            break;
-        case 'faq':
-            element.innerHTML += `
-                <div class="faq">
-                    <div class="faq-item">
-                        <h3 contenteditable="true">Question 1?</h3>
-                        <p contenteditable="true">Answer to question 1.</p>
-                    </div>
-                    <div class="faq-item">
-                        <h3 contenteditable="true">Question 2?</h3>
-                        <p contenteditable="true">Answer to question 2.</p>
-                    </div>
-                </div>
-            `;
-            break;
-        case 'cta':
-            element.innerHTML += `
-                <div class="cta">
-                    <h2 contenteditable="true">Call to Action</h2>
-                    <p contenteditable="true">Sign up now and get 20% off!</p>
-                    <button contenteditable="true">Sign Up</button>
-                </div>
-            `;
-            break;
-        case 'audio':
-            element.innerHTML += `
-                <audio controls>
-                    <source src="https://www.w3schools.com/html/horse.ogg" type="audio/ogg">
-                    Your browser does not support the audio element.
-                </audio>
-                <p contenteditable="true">Audio Caption</p>
-            `;
-            break;
-        case 'slider':
-            element.innerHTML += `
-                <div class="slider">
-                    <input type="range" min="0" max="100" value="50" class="slider-input">
-                    <p contenteditable="true">Slider Value: <span class="slider-value">50</span></p>
-                </div>
-            `;
-            break;
-        case 'rating':
-            element.innerHTML += `
-                <div class="rating">
-                    <span class="star" data-rating="1">&#9733;</span>
-                    <span class="star" data-rating="2">&#9733;</span>
-                    <span class="star" data-rating="3">&#9733;</span>
-                    <span class="star" data-rating="4">&#9733;</span>
-                    <span class="star" data-rating="5">&#9733;</span>
-                </div>
-                <p contenteditable="true">Rating: <span class="rating-value">0</span></p>
-            `;
-            break;
-        case 'chart':
-            element.innerHTML += `
-                <canvas id="myChart" width="400" height="200"></canvas>
-                <p contenteditable="true">Chart Caption</p>
-            `;
-            // Note: You'll need to include Chart.js library and initialize the chart
-            break;
-        case 'countdown-timer':
-            element.innerHTML += `
-                <div class="countdown-timer">
-                    <span class="days">00</span>:<span class="hours">00</span>:<span class="minutes">00</span>:<span class="seconds">00</span>
-                </div>
-                <p contenteditable="true">Countdown Timer Caption</p>
-            `;
-            break;
-        case 'section':
-            element.innerHTML += '<div class="section" style="width: 100%; height: 200px; border: 1px dashed #ccc;"><p contenteditable="true">Section Content</p></div>';
-            break;
-        case 'container':
-            element.innerHTML += '<div class="container" style="width: 300px; height: 200px; border: 1px solid #ccc;"><p contenteditable="true">Container Content</p></div>';
-            break;
-        case 'grid':
-            element.innerHTML += `
-                <div class="grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 300px; height: 200px;">
-                    <div contenteditable="true">Grid Item 1</div>
-                    <div contenteditable="true">Grid Item 2</div>
-                    <div contenteditable="true">Grid Item 3</div>
-                </div>
-            `;
-            break;
-        case 'flexbox':
-            element.innerHTML += `
-                <div class="flexbox" style="display: flex; justify-content: space-between; width: 300px; height: 100px;">
-                    <div contenteditable="true">Flex Item 1</div>
-                    <div contenteditable="true">Flex Item 2</div>
-                    <div contenteditable="true">Flex Item 3</div>
-                </div>
-            `;
-            break;
-        case 'columns':
-            element.innerHTML += `
-                <div class="columns" style="column-count: 3; column-gap: 20px; width: 100%;">
-                    <p contenteditable="true">Column 1 content</p>
-                    <p contenteditable="true">Column 2 content</p>
-                    <p contenteditable="true">Column 3 content</p>
-                </div>
-            `;
-            break;
-        case 'masonry':
-            element.innerHTML += `
-                <div class="masonry">
-                    <div class="masonry-item" contenteditable="true">Item 1</div>
-                    <div class="masonry-item" contenteditable="true">Item 2</div>
-                    <div class="masonry-item" contenteditable="true">Item 3</div>
-                    <div class="masonry-item" contenteditable="true">Item 4</div>
-                </div>
-            `;
-            break;
+        // Add cases for other element types here
     }
     
     element.addEventListener('mousedown', startDragging);
@@ -467,41 +187,46 @@ function selectElement(e) {
 
 // Property panel functions
 function initPropertyPanel() {
+    console.log('Initializing property panel...');
     const propertiesContent = document.getElementById('properties-content');
-    propertiesContent.innerHTML = `
-        <div class="property-group">
-            <label for="element-width">Width:</label>
-            <input type="text" id="element-width" class="property-input">
-        </div>
-        <div class="property-group">
-            <label for="element-height">Height:</label>
-            <input type="text" id="element-height" class="property-input">
-        </div>
-        <div class="property-group">
-            <label for="element-bgcolor">Background Color:</label>
-            <div class="color-picker-wrapper">
-                <input type="color" id="element-bgcolor" class="property-input">
-                <div id="bg-color-preview" class="color-preview"></div>
+    if (propertiesContent) {
+        propertiesContent.innerHTML = `
+            <div class="property-group">
+                <label for="element-width">Width:</label>
+                <input type="text" id="element-width" class="property-input">
             </div>
-        </div>
-        <div class="property-group">
-            <label for="element-text">Text Content:</label>
-            <textarea id="element-text" class="property-input"></textarea>
-        </div>
-        <div class="property-group">
-            <label for="element-font-size">Font Size:</label>
-            <input type="text" id="element-font-size" class="property-input">
-        </div>
-        <div class="property-group">
-            <label for="element-font-color">Font Color:</label>
-            <input type="color" id="element-font-color" class="property-input">
-        </div>
-    `;
+            <div class="property-group">
+                <label for="element-height">Height:</label>
+                <input type="text" id="element-height" class="property-input">
+            </div>
+            <div class="property-group">
+                <label for="element-bgcolor">Background Color:</label>
+                <div class="color-picker-wrapper">
+                    <input type="color" id="element-bgcolor" class="property-input">
+                    <div id="bg-color-preview" class="color-preview"></div>
+                </div>
+            </div>
+            <div class="property-group">
+                <label for="element-text">Text Content:</label>
+                <textarea id="element-text" class="property-input"></textarea>
+            </div>
+            <div class="property-group">
+                <label for="element-font-size">Font Size:</label>
+                <input type="text" id="element-font-size" class="property-input">
+            </div>
+            <div class="property-group">
+                <label for="element-font-color">Font Color:</label>
+                <input type="color" id="element-font-color" class="property-input">
+            </div>
+        `;
 
-    const inputs = document.querySelectorAll('.property-input');
-    inputs.forEach(input => {
-        input.addEventListener('change', updateElementProperty);
-    });
+        const inputs = document.querySelectorAll('.property-input');
+        inputs.forEach(input => {
+            input.addEventListener('change', updateElementProperty);
+        });
+    } else {
+        console.error('Properties content element not found');
+    }
 }
 
 function updateElementProperty(e) {
@@ -551,6 +276,7 @@ function updateElementText(element, value) {
 
 // History management
 function initHistory() {
+    console.log('Initializing history...');
     state.history = [];
     state.historyIndex = -1;
     updateHistoryPanel();
@@ -639,10 +365,11 @@ function applyAction(action) {
 
 // Device view functions
 function setDeviceView(device) {
+    console.log('Setting device view:', device);
     state.deviceView = device;
     const canvas = document.getElementById('canvas');
     const canvasContainer = document.getElementById('canvas-container');
-    if (canvas) {
+    if (canvas && canvasContainer) {
         canvas.className = device;
         
         switch(device) {
@@ -681,6 +408,8 @@ function setDeviceView(device) {
         const scale = device === 'desktop' ? 1 : (device === 'tablet' ? 0.75 : 0.5);
         canvas.style.transform = `scale(${scale})`;
         canvas.style.transformOrigin = 'top left';
+    } else {
+        console.error('Canvas or canvas container element not found');
     }
     
     const buttons = document.querySelectorAll('.device-button');
@@ -695,11 +424,17 @@ function setDeviceView(device) {
 // Grid toggle
 function toggleGrid() {
     state.showGrid = !state.showGrid;
-    document.querySelector('.grid-overlay').classList.toggle('active');
+    const gridOverlay = document.querySelector('.grid-overlay');
+    if (gridOverlay) {
+        gridOverlay.classList.toggle('active');
+    } else {
+        console.error('Grid overlay element not found');
+    }
 }
 
 // Save and load functions
 async function saveDesign() {
+    console.log('Saving design...');
     const design = {
         elements: state.elements,
         history: state.history,
@@ -716,6 +451,7 @@ async function saveDesign() {
 }
 
 async function loadSavedDesign() {
+    console.log('Loading saved design...');
     try {
         const savedDesign = await backend.getDesign();
         if (savedDesign) {
@@ -744,52 +480,58 @@ async function loadSavedDesign() {
         }
     } catch (error) {
         console.error('Error loading saved design:', error);
-        showModal('Error', 'There was anerror loading your saved design. Please try again.');
+        showModal('Error', 'There was an error loading your saved design. Please try again.');
     }
 }
 
 // Preview function
 function previewDesign() {
+    console.log('Previewing design...');
     const previewWindow = window.open('', '_blank');
     const canvas = document.getElementById('canvas');
     
-    previewWindow.document.write(`
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <title>Preview</title>
-            <style>
-                ${document.querySelector('style').textContent}
-                .canvas-element { position: relative !important; }
-                .element-controls { display: none; }
-                body { 
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    height: 100vh;
-                    margin: 0;
-                    background-color: #f0f0f0;
-                }
-                #preview-container {
-                    width: ${state.deviceView === 'desktop' ? '100%' : state.deviceView === 'tablet' ? '768px' : '375px'};
-                    height: ${state.deviceView === 'desktop' ? '100%' : state.deviceView === 'tablet' ? '1024px' : '667px'};
-                    border: 10px solid #333;
-                    border-radius: ${state.deviceView === 'desktop' ? '5px' : '20px'};
-                    overflow: auto;
-                    background-color: white;
-                }
-            </style>
-        </head>
-        <body>
-            <div id="preview-container">
-                ${canvas.innerHTML}
-            </div>
-        </body>
-        </html>
-    `);
+    if (previewWindow && canvas) {
+        previewWindow.document.write(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Preview</title>
+                <style>
+                    ${document.querySelector('style').textContent}
+                    .canvas-element { position: relative !important; }
+                    .element-controls { display: none; }
+                    body { 
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        height: 100vh;
+                        margin: 0;
+                        background-color: #f0f0f0;
+                    }
+                    #preview-container {
+                        width: ${state.deviceView === 'desktop' ? '100%' : state.deviceView === 'tablet' ? '768px' : '375px'};
+                        height: ${state.deviceView === 'desktop' ? '100%' : state.deviceView === 'tablet' ? '1024px' : '667px'};
+                        border: 10px solid #333;
+                        border-radius: ${state.deviceView === 'desktop' ? '5px' : '20px'};
+                        overflow: auto;
+                        background-color: white;
+                    }
+                </style>
+            </head>
+            <body>
+                <div id="preview-container">
+                    ${canvas.innerHTML}
+                </div>
+            </body>
+            </html>
+        `);
+    } else {
+        console.error('Unable to open preview window or canvas not found');
+    }
 }
 
 function duplicateElement(elementId) {
+    console.log('Duplicating element:', elementId);
     const originalElement = document.getElementById(elementId);
     if (originalElement) {
         const clone = originalElement.cloneNode(true);
@@ -802,10 +544,13 @@ function duplicateElement(elementId) {
             originalId: elementId,
             newElement: clone.outerHTML
         });
+    } else {
+        console.error('Element to duplicate not found:', elementId);
     }
 }
 
 function deleteElement(elementId) {
+    console.log('Deleting element:', elementId);
     const element = document.getElementById(elementId);
     if (element) {
         const deletedElementHTML = element.outerHTML;
@@ -815,36 +560,49 @@ function deleteElement(elementId) {
             elementId: elementId,
             element: deletedElementHTML
         });
+    } else {
+        console.error('Element to delete not found:', elementId);
     }
 }
 
 function handleCanvasClick(e) {
-    if (e.target === canvas) {
+    if (e.target.id === 'canvas') {
         if (state.selectedElement) {
             state.selectedElement.classList.remove('selected');
         }
         state.selectedElement = null;
-        document.getElementById('properties-panel').classList.remove('active');
+        const propertiesPanel = document.getElementById('properties-panel');
+        if (propertiesPanel) {
+            propertiesPanel.classList.remove('active');
+        } else {
+            console.error('Properties panel element not found');
+        }
     }
 }
 
 function updateHistoryPanel() {
     // Implement if you have a history panel in your UI
+    console.log('Updating history panel...');
 }
 
 function showProperties() {
+    console.log('Showing properties...');
     const propertiesPanel = document.getElementById('properties-panel');
-    propertiesPanel.classList.add('active');
-    if (state.selectedElement) {
-        const type = state.selectedElement.dataset.type;
-        const styles = window.getComputedStyle(state.selectedElement);
-        
-        document.getElementById('element-width').value = styles.width;
-        document.getElementById('element-height').value = styles.height;
-        document.getElementById('element-bgcolor').value = rgb2hex(styles.backgroundColor);
-        document.getElementById('element-text').value = getElementText(state.selectedElement);
-        document.getElementById('element-font-size').value = styles.fontSize;
-        document.getElementById('element-font-color').value = rgb2hex(styles.color);
+    if (propertiesPanel) {
+        propertiesPanel.classList.add('active');
+        if (state.selectedElement) {
+            const type = state.selectedElement.dataset.type;
+            const styles = window.getComputedStyle(state.selectedElement);
+            
+            document.getElementById('element-width').value = styles.width;
+            document.getElementById('element-height').value = styles.height;
+            document.getElementById('element-bgcolor').value = rgb2hex(styles.backgroundColor);
+            document.getElementById('element-text').value = getElementText(state.selectedElement);
+            document.getElementById('element-font-size').value = styles.fontSize;
+            document.getElementById('element-font-color').value = rgb2hex(styles.color);
+        }
+    } else {
+        console.error('Properties panel element not found');
     }
 }
 
@@ -873,6 +631,7 @@ function hex(x) {
 
 // New function to generate HTML code
 function generateHTMLCode() {
+    console.log('Generating HTML code...');
     const canvas = document.getElementById('canvas');
     let htmlCode = `<!DOCTYPE html>\n<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <title>Generated Website</title>\n    <style>\n`;
     
@@ -895,6 +654,7 @@ function generateHTMLCode() {
 }
 
 function generateCSS() {
+    console.log('Generating CSS...');
     let css = `
         body {
             font-family: Arial, sans-serif;
@@ -922,6 +682,7 @@ function generateCSS() {
 }
 
 function generateJavaScript() {
+    console.log('Generating JavaScript...');
     let js = `
         // Add any necessary JavaScript here
         console.log('Website loaded');
@@ -955,186 +716,8 @@ function generateJavaScript() {
                 startCountdown(tenMinutes, display);
             };
             `;
-        } else if (el.type === 'carousel') {
-            js += `
-            // Carousel functionality
-            function initCarousel() {
-                const carousels = document.querySelectorAll('.carousel');
-                carousels.forEach(carousel => {
-                    const items = carousel.querySelectorAll('.carousel-item');
-                    const prevBtn = carousel.querySelector('.carousel-prev');
-                    const nextBtn = carousel.querySelector('.carousel-next');
-                    let currentIndex = 0;
-
-                    function showItem(index) {
-                        items.forEach(item => item.classList.remove('active'));
-                        items[index].classList.add('active');
-                    }
-
-                    prevBtn.addEventListener('click', () => {
-                        currentIndex = (currentIndex - 1 + items.length) % items.length;
-                        showItem(currentIndex);
-                    });
-
-                    nextBtn.addEventListener('click', () => {
-                        currentIndex = (currentIndex + 1) % items.length;
-                        showItem(currentIndex);
-                    });
-                });
-            }
-
-            window.addEventListener('load', initCarousel);
-            `;
-        } else if (el.type === 'accordion') {
-            js += `
-            // Accordion functionality
-            function initAccordion() {
-                const accordions = document.querySelectorAll('.accordion');
-                accordions.forEach(accordion => {
-                    const headers = accordion.querySelectorAll('.accordion-header');
-                    headers.forEach(header => {
-                        header.addEventListener('click', () => {
-                            const content = header.nextElementSibling;
-                            content.style.display = content.style.display === 'none' ? 'block' : 'none';
-                        });
-                    });
-                });
-            }
-
-            window.addEventListener('load', initAccordion);
-            `;
-        } else if (el.type === 'tabs') {
-            js += `
-            // Tabs functionality
-            function initTabs() {
-                const tabsContainers = document.querySelectorAll('.tabs');
-                tabsContainers.forEach(container => {
-                    const headers = container.querySelectorAll('.tab-header');
-                    const contents = container.querySelectorAll('.tab-content');
-
-                    headers.forEach((header, index) => {
-                        header.addEventListener('click', () => {
-                            headers.forEach(h => h.classList.remove('active'));
-                            contents.forEach(c => c.classList.remove('active'));
-                            header.classList.add('active');
-                            contents[index].classList.add('active');
-                        });
-                    });
-                });
-            }
-
-            window.addEventListener('load', initTabs);
-            `;
-        } else if (el.type === 'slider') {
-            js += `
-            // Slider functionality
-            function initSlider() {
-                const sliders = document.querySelectorAll('.slider');
-                sliders.forEach(slider => {
-                    const input = slider.querySelector('.slider-input');
-                    const value = slider.querySelector('.slider-value');
-                    input.addEventListener('input', () => {
-                        value.textContent = input.value;
-                    });
-                });
-            }
-
-            window.addEventListener('load', initSlider);
-            `;
-        } else if (el.type === 'rating') {
-            js += `
-            // Rating functionality
-            function initRating() {
-                const ratings = document.querySelectorAll('.rating');
-                ratings.forEach(rating => {
-                    const stars = rating.querySelectorAll('.star');
-                    const ratingValue = rating.querySelector('.rating-value');
-                    stars.forEach(star => {
-                        star.addEventListener('click', () => {
-                            const value = star.dataset.rating;
-                            ratingValue.textContent = value;
-                            stars.forEach(s => s.classList.toggle('active', s.dataset.rating <= value));
-                        });
-                    });
-                });
-            }
-
-            window.addEventListener('load', initRating);
-            `;
-        } else if (el.type === 'chart') {
-            js += `
-            // Chart functionality
-            function initChart() {
-                const ctx = document.getElementById('myChart').getContext('2d');
-                new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-                        datasets: [{
-                            label: '# of Votes',
-                            data: [12, 19, 3, 5, 2, 3],
-                            backgroundColor: [
-                                'rgba(255, 99, 132, 0.2)',
-                                'rgba(54, 162, 235, 0.2)',
-                                'rgba(255, 206, 86, 0.2)',
-                                'rgba(75, 192, 192, 0.2)',
-                                'rgba(153, 102, 255, 0.2)',
-                                'rgba(255, 159, 64, 0.2)'
-                            ],
-                            borderColor: [
-                                'rgba(255, 99, 132, 1)',
-                                'rgba(54, 162, 235, 1)',
-                                'rgba(255, 206, 86, 1)',
-                                'rgba(75, 192, 192, 1)',
-                                'rgba(153, 102, 255, 1)',
-                                'rgba(255, 159, 64, 1)'
-                            ],
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        scales: {
-                            y: {
-                                beginAtZero: true
-                            }
-                        }
-                    }
-                });
-            }
-
-            window.addEventListener('load', initChart);
-            `;
-        } else if (el.type === 'countdown-timer') {
-            js += `
-            // Countdown Timer functionality
-            function initCountdownTimer() {
-                const countdownTimers = document.querySelectorAll('.countdown-timer');
-                countdownTimers.forEach(timer => {
-                    const endDate = new Date().getTime() + 24 * 60 * 60 * 1000; // 24 hours from now
-                    const x = setInterval(function() {
-                        const now = new Date().getTime();
-                        const distance = endDate - now;
-                        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-                        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-                        
-                        timer.querySelector('.days').textContent = days.toString().padStart(2, '0');
-                        timer.querySelector('.hours').textContent = hours.toString().padStart(2, '0');
-                        timer.querySelector('.minutes').textContent = minutes.toString().padStart(2, '0');
-                        timer.querySelector('.seconds').textContent = seconds.toString().padStart(2, '0');
-                        
-                        if (distance < 0) {
-                            clearInterval(x);
-                            timer.textContent = "EXPIRED";
-                        }
-                    }, 1000);
-                });
-            }
-
-            window.addEventListener('load', initCountdownTimer);
-            `;
         }
+        // Add more element-specific JavaScript here
     });
     
     return js;
@@ -1142,61 +725,75 @@ function generateJavaScript() {
 
 // Updated function to toggle code view
 function toggleCodeView() {
+    console.log('Toggling code view...');
     const codeViewOverlay = document.getElementById('code-view-overlay');
     const generatedCode = document.getElementById('generated-code');
     
-    if (codeViewOverlay.style.display === 'none') {
-        const htmlCode = generateHTMLCode();
-        const cssCode = generateCSS();
-        const jsCode = generateJavaScript();
+    if (codeViewOverlay && generatedCode) {
+        if (codeViewOverlay.style.display === 'none') {const htmlCode = generateHTMLCode();
+            const cssCode = generateCSS();
+            const jsCode = generateJavaScript();
 
-        generatedCode.textContent = htmlCode;
-        generatedCode.className = 'language-html';
-        Prism.highlightElement(generatedCode);
+            generatedCode.textContent = htmlCode;
+            generatedCode.className = 'language-html';
+            Prism.highlightElement(generatedCode);
 
-        codeViewOverlay.style.display = 'block';
+            codeViewOverlay.style.display = 'block';
 
-        // Add event listeners to code tabs
-        document.querySelectorAll('.code-tab').forEach(tab => {
-            tab.addEventListener('click', () => {
-                document.querySelectorAll('.code-tab').forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-                switch (tab.dataset.lang) {
-                    case 'html':
-                        generatedCode.textContent = htmlCode;
-                        generatedCode.className = 'language-html';
-                        break;
-                    case 'css':
-                        generatedCode.textContent = cssCode;
-                        generatedCode.className = 'language-css';
-                        break;
-                    case 'js':
-                        generatedCode.textContent = jsCode;
-                        generatedCode.className = 'language-javascript';
-                        break;
-                }
-                Prism.highlightElement(generatedCode);
+            // Add event listeners to code tabs
+            document.querySelectorAll('.code-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.code-tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    switch (tab.dataset.lang) {
+                        case 'html':
+                            generatedCode.textContent = htmlCode;
+                            generatedCode.className = 'language-html';
+                            break;
+                        case 'css':
+                            generatedCode.textContent = cssCode;
+                            generatedCode.className = 'language-css';
+                            break;
+                        case 'js':
+                            generatedCode.textContent = jsCode;
+                            generatedCode.className = 'language-javascript';
+                            break;
+                    }
+                    Prism.highlightElement(generatedCode);
+                });
             });
-        });
+        } else {
+            codeViewOverlay.style.display = 'none';
+        }
     } else {
-        codeViewOverlay.style.display = 'none';
+        console.error('Code view overlay or generated code element not found');
     }
 }
 
 // Modal functionality
 function showModal(title, message) {
+    console.log('Showing modal:', title);
     const modalOverlay = document.getElementById('modal-overlay');
     const modalTitle = document.getElementById('modal-title');
     const modalBody = document.getElementById('modal-body');
     
-    modalTitle.textContent = title;
-    modalBody.textContent = message;
-    modalOverlay.style.display = 'flex';
+    if (modalOverlay && modalTitle && modalBody) {
+        modalTitle.textContent = title;
+        modalBody.textContent = message;
+        modalOverlay.style.display = 'flex';
+    } else {
+        console.error('Modal elements not found');
+    }
 }
 
 function closeModal() {
+    console.log('Closing modal');
     const modalOverlay = document.getElementById('modal-overlay');
-    modalOverlay.style.display = 'none';
+    if (modalOverlay) {
+        modalOverlay.style.display = 'none';
+    } else {
+        console.error('Modal overlay element not found');
+    }
 }
 
 // Initialize the builder
@@ -1214,3 +811,46 @@ window.deleteElement = deleteElement;
 window.toggleCodeView = toggleCodeView;
 window.showModal = showModal;
 window.closeModal = closeModal;
+
+// Error handling
+window.onerror = function(message, source, lineno, colno, error) {
+    console.error('Unhandled error:', message, 'at', source, 'line', lineno, 'column', colno);
+    showModal('Error', 'An unexpected error occurred. Please check the console for more details.');
+    return true;
+};
+
+// Add elements to the sidebar
+function populateSidebar() {
+    console.log('Populating sidebar...');
+    const elementGrid = document.querySelector('.element-grid');
+    if (elementGrid) {
+        const elements = [
+            { type: 'heading', icon: 'fa-heading', label: 'Heading' },
+            { type: 'text', icon: 'fa-paragraph', label: 'Text' },
+            { type: 'button', icon: 'fa-square', label: 'Button' },
+            { type: 'image', icon: 'fa-image', label: 'Image' },
+            // Add more elements here
+        ];
+
+        elements.forEach(el => {
+            const elementDiv = document.createElement('div');
+            elementDiv.className = 'element';
+            elementDiv.draggable = true;
+            elementDiv.dataset.type = el.type;
+            elementDiv.innerHTML = `
+                <i class="fas ${el.icon}"></i>
+                <span>${el.label}</span>
+            `;
+            elementDiv.addEventListener('dragstart', handleDragStart);
+            elementGrid.appendChild(elementDiv);
+        });
+    } else {
+        console.error('Element grid not found in sidebar');
+    }
+}
+
+// Call populateSidebar after DOM content is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    initBuilder();
+    populateSidebar();
+});

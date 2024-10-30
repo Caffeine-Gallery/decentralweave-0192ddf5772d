@@ -15,13 +15,13 @@
             <div class="sidebar-section">
                 <h3 class="sidebar-title">Add Elements</h3>
                 <div class="element-grid">
-                    <!-- ... (rest of the elements remain unchanged) ... -->
+                    <!-- Elements will be dynamically added here -->
                 </div>
             </div>
             <div class="sidebar-section">
                 <h3 class="sidebar-title">Layout</h3>
                 <div class="element-grid">
-                    <!-- ... (rest of the layout elements remain unchanged) ... -->
+                    <!-- Layout elements will be dynamically added here -->
                 </div>
             </div>
         </div>
@@ -64,7 +64,7 @@
     </div>
     <div id="modal-overlay" class="modal-overlay">
         <div id="modal-content" class="modal-content">
-            <span class="close-modal">&times;</span>
+            <span class="close-modal" onclick="closeModal()">&times;</span>
             <h2 id="modal-title"></h2>
             <div id="modal-body"></div>
         </div>
