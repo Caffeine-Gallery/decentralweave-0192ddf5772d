@@ -291,20 +291,27 @@ function redo() {
 function revertAction(action) {
     switch(action.type) {
         case 'add':
-            document.getElementById(action.elementId).remove();
+            const elementToRemove = document.getElementById(action.elementId);
+            if (elementToRemove) {
+                elementToRemove.remove();
+            }
             break;
         case 'delete':
             const canvas = document.getElementById('canvas');
             canvas.innerHTML += action.element;
             break;
         case 'move':
-            const element = document.getElementById(action.elementId);
-            element.style.left = action.previousPosition.x + 'px';
-            element.style.top = action.previousPosition.y + 'px';
+            const elementToMove = document.getElementById(action.elementId);
+            if (elementToMove) {
+                elementToMove.style.left = action.previousPosition.x + 'px';
+                elementToMove.style.top = action.previousPosition.y + 'px';
+            }
             break;
         case 'modify':
             const modifiedElement = document.getElementById(action.elementId);
-            modifiedElement.style[action.property] = action.previousValue;
+            if (modifiedElement) {
+                modifiedElement.style[action.property] = action.previousValue;
+            }
             break;
     }
 }
@@ -316,16 +323,23 @@ function applyAction(action) {
             canvas.innerHTML += action.element;
             break;
         case 'delete':
-            document.getElementById(action.elementId).remove();
+            const elementToDelete = document.getElementById(action.elementId);
+            if (elementToDelete) {
+                elementToDelete.remove();
+            }
             break;
         case 'move':
-            const element = document.getElementById(action.elementId);
-            element.style.left = action.position.x + 'px';
-            element.style.top = action.position.y + 'px';
+            const elementToMove = document.getElementById(action.elementId);
+            if (elementToMove) {
+                elementToMove.style.left = action.position.x + 'px';
+                elementToMove.style.top = action.position.y + 'px';
+            }
             break;
         case 'modify':
             const modifiedElement = document.getElementById(action.elementId);
-            modifiedElement.style[action.property] = action.value;
+            if (modifiedElement) {
+                modifiedElement.style[action.property] = action.value;
+            }
             break;
     }
 }
@@ -345,6 +359,22 @@ function setDeviceView(device) {
             button.classList.add('active');
         }
     });
+    
+    // Adjust canvas size based on device view
+    switch(device) {
+        case 'desktop':
+            canvas.style.width = '100%';
+            canvas.style.height = '100%';
+            break;
+        case 'tablet':
+            canvas.style.width = '768px';
+            canvas.style.height = '1024px';
+            break;
+        case 'mobile':
+            canvas.style.width = '375px';
+            canvas.style.height = '667px';
+            break;
+    }
 }
 
 // Grid toggle
