@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Website Builder</title>
+    <title>Advanced Website Builder</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="index.css">
 </head>
 <body>
     <div id="app">
         <div id="sidebar">
-            <div class="logo">Website Builder</div>
+            <div class="logo">Advanced Website Builder</div>
             <div class="sidebar-section">
                 <h3 class="sidebar-title">Add Elements</h3>
                 <div class="element-grid">
@@ -78,6 +78,22 @@
                         <i class="fas fa-quote-right"></i>
                         <span>Testimonial</span>
                     </div>
+                    <div class="element" draggable="true" data-type="progress-bar">
+                        <i class="fas fa-tasks"></i>
+                        <span>Progress Bar</span>
+                    </div>
+                    <div class="element" draggable="true" data-type="modal">
+                        <i class="fas fa-window-maximize"></i>
+                        <span>Modal</span>
+                    </div>
+                    <div class="element" draggable="true" data-type="tooltip">
+                        <i class="fas fa-info-circle"></i>
+                        <span>Tooltip</span>
+                    </div>
+                    <div class="element" draggable="true" data-type="card">
+                        <i class="fas fa-credit-card"></i>
+                        <span>Card</span>
+                    </div>
                 </div>
             </div>
             <div class="sidebar-section">
@@ -102,6 +118,10 @@
                     <div class="element" draggable="true" data-type="columns">
                         <i class="fas fa-columns"></i>
                         <span>Columns</span>
+                    </div>
+                    <div class="element" draggable="true" data-type="masonry">
+                        <i class="fas fa-th-large"></i>
+                        <span>Masonry</span>
                     </div>
                 </div>
             </div>
@@ -129,33 +149,7 @@
         </div>
         <div id="properties-panel">
             <h3>Element Properties</h3>
-            <div class="property-group">
-                <label for="element-width">Width:</label>
-                <input type="text" id="element-width" class="property-input">
-            </div>
-            <div class="property-group">
-                <label for="element-height">Height:</label>
-                <input type="text" id="element-height" class="property-input">
-            </div>
-            <div class="property-group">
-                <label for="element-bgcolor">Background Color:</label>
-                <div class="color-picker-wrapper">
-                    <input type="color" id="element-bgcolor" class="property-input">
-                    <div id="bg-color-preview" class="color-preview"></div>
-                </div>
-            </div>
-            <div class="property-group">
-                <label for="element-text">Text Content:</label>
-                <textarea id="element-text" class="property-input"></textarea>
-            </div>
-            <div class="property-group">
-                <label for="element-font-size">Font Size:</label>
-                <input type="text" id="element-font-size" class="property-input">
-            </div>
-            <div class="property-group">
-                <label for="element-font-color">Font Color:</label>
-                <input type="color" id="element-font-color" class="property-input">
-            </div>
+            <div id="properties-content"></div>
         </div>
     </div>
     <div id="code-view-overlay" style="display: none;">
@@ -163,6 +157,13 @@
             <pre><code id="generated-code"></code></pre>
         </div>
         <button id="close-code-view" onclick="toggleCodeView()">Close</button>
+    </div>
+    <div id="modal-overlay" class="modal-overlay">
+        <div id="modal-content" class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2 id="modal-title"></h2>
+            <div id="modal-body"></div>
+        </div>
     </div>
     <script type="module" src="index.js"></script>
 </body>

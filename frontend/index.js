@@ -190,6 +190,45 @@ function createCanvasElement(type) {
                 </div>
             `;
             break;
+        case 'progress-bar':
+            element.innerHTML += `
+                <div class="progress-bar">
+                    <div class="progress" style="width: 70%;">70%</div>
+                </div>
+            `;
+            break;
+        case 'modal':
+            element.innerHTML += `
+                <button onclick="openModal('${element.id}')">Open Modal</button>
+                <div class="modal">
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <h2>Modal Title</h2>
+                        <p>This is the modal content.</p>
+                    </div>
+                </div>
+            `;
+            break;
+        case 'tooltip':
+            element.innerHTML += `
+                <span class="tooltip">
+                    Hover over me
+                    <span class="tooltiptext">This is a tooltip</span>
+                </span>
+            `;
+            break;
+        case 'card':
+            element.innerHTML += `
+                <div class="card">
+                    <img src="https://via.placeholder.com/300x200" alt="Card image">
+                    <div class="card-content">
+                        <h3>Card Title</h3>
+                        <p>This is some example content for the card.</p>
+                        <button>Learn More</button>
+                    </div>
+                </div>
+            `;
+            break;
         case 'section':
             element.innerHTML += '<div class="section" style="width: 100%; height: 200px; border: 1px dashed #ccc;"></div>';
             break;
@@ -204,6 +243,16 @@ function createCanvasElement(type) {
             break;
         case 'columns':
             element.innerHTML += '<div class="columns" style="column-count: 3; column-gap: 20px; width: 100%;"><p>Column 1 content</p><p>Column 2 content</p><p>Column 3 content</p></div>';
+            break;
+        case 'masonry':
+            element.innerHTML += `
+                <div class="masonry">
+                    <div class="masonry-item">Item 1</div>
+                    <div class="masonry-item">Item 2</div>
+                    <div class="masonry-item">Item 3</div>
+                    <div class="masonry-item">Item 4</div>
+                </div>
+            `;
             break;
     }
     
@@ -267,6 +316,37 @@ function selectElement(e) {
 
 // Property panel functions
 function initPropertyPanel() {
+    const propertiesContent = document.getElementById('properties-content');
+    propertiesContent.innerHTML = `
+        <div class="property-group">
+            <label for="element-width">Width:</label>
+            <input type="text" id="element-width" class="property-input">
+        </div>
+        <div class="property-group">
+            <label for="element-height">Height:</label>
+            <input type="text" id="element-height" class="property-input">
+        </div>
+        <div class="property-group">
+            <label for="element-bgcolor">Background Color:</label>
+            <div class="color-picker-wrapper">
+                <input type="color" id="element-bgcolor" class="property-input">
+                <div id="bg-color-preview" class="color-preview"></div>
+            </div>
+        </div>
+        <div class="property-group">
+            <label for="element-text">Text Content:</label>
+            <textarea id="element-text" class="property-input"></textarea>
+        </div>
+        <div class="property-group">
+            <label for="element-font-size">Font Size:</label>
+            <input type="text" id="element-font-size" class="property-input">
+        </div>
+        <div class="property-group">
+            <label for="element-font-color">Font Color:</label>
+            <input type="color" id="element-font-color" class="property-input">
+        </div>
+    `;
+
     const inputs = document.querySelectorAll('.property-input');
     inputs.forEach(input => {
         input.addEventListener('change', updateElementProperty);
@@ -450,10 +530,10 @@ async function saveDesign() {
     
     try {
         await backend.saveDesign(design);
-        alert('Design saved successfully!');
+        showModal('Design Saved', 'Your design has been saved successfully!');
     } catch (error) {
         console.error('Error saving design:', error);
-        alert('Error saving design. Please try again.');
+        showModal('Error', 'There was an error saving your design. Please try again.');
     }
 }
 
@@ -486,7 +566,7 @@ async function loadSavedDesign() {
         }
     } catch (error) {
         console.error('Error loading saved design:', error);
-        alert('Error loading saved design. Please try again.');
+        showModal('Error', 'There was an error loading your saved design. Please try again.');
     }
 }
 
@@ -761,6 +841,22 @@ function toggleCodeView() {
     }
 }
 
+// Modal functionality
+function showModal(title, message) {
+    const modalOverlay = document.getElementById('modal-overlay');
+    const modalTitle = document.getElementById('modal-title');
+    const modalBody = document.getElementById('modal-body');
+    
+    modalTitle.textContent = title;
+    modalBody.textContent = message;
+    modalOverlay.style.display = 'flex';
+}
+
+function closeModal() {
+    const modalOverlay = document.getElementById('modal-overlay');
+    modalOverlay.style.display = 'none';
+}
+
 // Initialize the builder
 document.addEventListener('DOMContentLoaded', initBuilder);
 
@@ -774,3 +870,5 @@ window.saveDesign = saveDesign;
 window.duplicateElement = duplicateElement;
 window.deleteElement = deleteElement;
 window.toggleCodeView = toggleCodeView;
+window.showModal = showModal;
+window.closeModal = closeModal;
