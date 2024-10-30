@@ -142,7 +142,7 @@ body {
     background: white;
     border: 1px solid transparent;
     padding: 10px;
-    cursor: move;
+    cursor: grab;
     user-select: none;
     transition: all 0.2s;
 }
@@ -154,6 +154,10 @@ body {
 .canvas-element.selected {
     border: 2px solid var(--primary-color);
     box-shadow: 0 0 0 2px rgba(17, 109, 255, 0.2);
+}
+
+.canvas-element:active {
+    cursor: grabbing;
 }
 
 .element-controls {

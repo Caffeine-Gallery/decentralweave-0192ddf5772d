@@ -35,6 +35,9 @@ function initDragAndDrop() {
     canvas.addEventListener('dragover', handleDragOver);
     canvas.addEventListener('drop', handleDrop);
     canvas.addEventListener('click', handleCanvasClick);
+    canvas.addEventListener('mousedown', startDragging);
+    document.addEventListener('mousemove', drag);
+    document.addEventListener('mouseup', stopDragging);
 }
 
 function handleDragStart(e) {
@@ -146,10 +149,6 @@ function createCanvasElement(type) {
             break;
     }
     
-    // Add event listeners
-    element.addEventListener('mousedown', startDragging);
-    element.addEventListener('click', selectElement);
-    
     return element;
 }
 
@@ -158,8 +157,34 @@ function startDragging(e) {
     if (e.target.classList.contains('canvas-element')) {
         state.isDragging = true;
         state.selectedElement = e.target;
-        state.initialX = e.clientX - state.xOffset;
-        state.initialY = e.clientY - state.yOffset;
+        state.initialX = e.clientX - state.selectedElement.offsetLeft;
+        state.initialY = e.clientY - state.selectedElement.offsetTop;
+        
+        state.selectedElement.style.cursor = 'grabbing';
+    }
+}
+
+function drag(e) {
+    if (state.isDragging) {
+        e.preventDefault();
+        state.currentX = e.clientX - state.initialX;
+        state.currentY = e.clientY - state.initialY;
+
+        state.selectedElement.style.left = state.currentX + 'px';
+        state.selectedElement.style.top = state.currentY + 'px';
+    }
+}
+
+function stopDragging(e) {
+    if (state.isDragging) {
+        state.isDragging = false;
+        state.selectedElement.style.cursor = 'grab';
+        
+        addToHistory({
+            type: 'move',
+            elementId: state.selectedElement.id,
+            position: { x: state.currentX, y: state.currentY }
+        });
     }
 }
 
