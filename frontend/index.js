@@ -154,9 +154,9 @@ function createCanvasElement(type) {
 
 // Element manipulation functions
 function startDragging(e) {
-    if (e.target.classList.contains('canvas-element')) {
+    if (e.target.closest('.canvas-element')) {
         state.isDragging = true;
-        state.selectedElement = e.target;
+        state.selectedElement = e.target.closest('.canvas-element');
         state.initialX = e.clientX - state.selectedElement.offsetLeft;
         state.initialY = e.clientY - state.selectedElement.offsetTop;
         
@@ -265,6 +265,48 @@ function redo() {
     updateHistoryPanel();
 }
 
+function revertAction(action) {
+    switch(action.type) {
+        case 'add':
+            document.getElementById(action.elementId).remove();
+            break;
+        case 'delete':
+            const canvas = document.getElementById('canvas');
+            canvas.innerHTML += action.element;
+            break;
+        case 'move':
+            const element = document.getElementById(action.elementId);
+            element.style.left = action.previousPosition.x + 'px';
+            element.style.top = action.previousPosition.y + 'px';
+            break;
+        case 'modify':
+            const modifiedElement = document.getElementById(action.elementId);
+            modifiedElement.style[action.property] = action.previousValue;
+            break;
+    }
+}
+
+function applyAction(action) {
+    switch(action.type) {
+        case 'add':
+            const canvas = document.getElementById('canvas');
+            canvas.innerHTML += action.element;
+            break;
+        case 'delete':
+            document.getElementById(action.elementId).remove();
+            break;
+        case 'move':
+            const element = document.getElementById(action.elementId);
+            element.style.left = action.position.x + 'px';
+            element.style.top = action.position.y + 'px';
+            break;
+        case 'modify':
+            const modifiedElement = document.getElementById(action.elementId);
+            modifiedElement.style[action.property] = action.value;
+            break;
+    }
+}
+
 // Device view functions
 function setDeviceView(device) {
     state.deviceView = device;
@@ -304,19 +346,28 @@ async function loadSavedDesign() {
     try {
         const savedDesign = await backend.getDesign();
         if (savedDesign) {
-            const design = savedDesign;
-            design.elements.forEach(el => {
-                const element = createCanvasElement(el.type);
-                element.style.cssText = el.styles;
-                canvas.appendChild(element);
-            });
+            const canvas = document.getElementById('canvas');
+            canvas.innerHTML = ''; // Clear existing elements
             
-            state.elements = design.elements;
-            state.history = design.history;
-            setDeviceView(design.deviceView);
+            if (savedDesign.elements && Array.isArray(savedDesign.elements)) {
+                savedDesign.elements.forEach(el => {
+                    const element = createCanvasElement(el.type);
+                    element.style.cssText = el.styles;
+                    element.style.left = el.position.x + 'px';
+                    element.style.top = el.position.y + 'px';
+                    canvas.appendChild(element);
+                });
+            }
+            
+            state.elements = savedDesign.elements || [];
+            state.history = savedDesign.history || [];
+            state.historyIndex = state.history.length - 1;
+            setDeviceView(savedDesign.deviceView || 'desktop');
+            updateHistoryPanel();
         }
     } catch (error) {
         console.error('Error loading saved design:', error);
+        alert('Error loading saved design. Please try again.');
     }
 }
 
@@ -375,10 +426,12 @@ function duplicateElement(elementId) {
 function deleteElement(elementId) {
     const element = document.getElementById(elementId);
     if (element) {
+        const deletedElementHTML = element.outerHTML;
         element.remove();
         addToHistory({
             type: 'delete',
-            elementId: elementId
+            elementId: elementId,
+            element: deletedElementHTML
         });
     }
 }
